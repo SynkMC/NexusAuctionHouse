@@ -1,0 +1,15 @@
+name: NexusAuctionHouse
+version: '1.0'
+main: cc.synkdev.nah.NexusAuctionHouse
+api-version: '1.13'
+authors: [ Synk ]
+description: The easy auction house plugin you've looked for, and for free!
+website: https://synkdev.cc
+depend:
+  - SynkLibs
+commands:
+  ah:
+    description: "Main plugin command"
+    aliases:
+      - "nah"
+      - "nexusauctionhouse"
