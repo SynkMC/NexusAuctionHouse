@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 public class DataFileManager {
@@ -115,7 +116,8 @@ public class DataFileManager {
                 }
             });
             writer.close();
-            temp.renameTo(file);
+            file.delete();
+            Files.move(temp.toPath(), file.toPath());
 
             temp = new File(folder, "temp-retrieve-"+System.currentTimeMillis()+".yml");
             temp.createNewFile();
@@ -141,7 +143,9 @@ public class DataFileManager {
                     throw new RuntimeException(e);
                 }
             });
-            temp.renameTo(expired);
+            writer1.close();
+            expired.delete();
+            Files.move(temp.toPath(), expired.toPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

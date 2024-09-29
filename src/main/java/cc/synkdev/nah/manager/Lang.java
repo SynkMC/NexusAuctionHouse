@@ -9,11 +9,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class Lang {
-    NexusAuctionHouse core = NexusAuctionHouse.getInstance();
-    static NexusAuctionHouse score = NexusAuctionHouse.getInstance();
-    File file = new File(core.getDataFolder(), "lang.yml");
-    FileConfiguration config;
-    public void init() {
+    private static final NexusAuctionHouse core = NexusAuctionHouse.getInstance();
+    private static final File file = new File(core.getDataFolder(), "lang.yml");
+    private static FileConfiguration config;
+    public static void init() {
         try {
             if (!file.exists()) file.createNewFile();
 
@@ -26,7 +25,11 @@ public class Lang {
     }
 
     public static String translate(String s) {
-        return score.lang.getString(s);
+        String ret = core.lang.getString(s);
+        if (ret == null) {
+            init();
+        }
+        return ret;
     }
 
     public static String translate(String s, String s1) {

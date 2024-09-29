@@ -180,7 +180,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin {
 
     @Override
     public String ver() {
-        return "1.0.1";
+        return "1.1";
     }
 
     @Override
