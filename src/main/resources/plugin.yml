@@ -1,5 +1,5 @@
 name: NexusAuctionHouse
-version: '1.1'
+version: '${project.version}'
 main: cc.synkdev.nah.NexusAuctionHouse
 api-version: '1.13'
 authors: [ Synk ]

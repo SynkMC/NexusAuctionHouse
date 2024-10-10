@@ -44,6 +44,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin {
     public Map<OfflinePlayer, List<ItemStack>> retrieveMap = new HashMap<>();
     public List<SortingTypes> sortingTypes;
     @Getter private Economy econ = null;
+    public Map<String, String> langMap = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -144,7 +145,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin {
         DataFileManager.sort();
 
         time = System.currentTimeMillis()-time;
-        Util.staffBc(prefix()+ChatColor.GOLD+Lang.translate("dataSave", time+""));
+        if (config.getBoolean("save-notif")) Util.staffBc(prefix()+ChatColor.GOLD+Lang.translate("dataSave", time+""));
     }
 
     BukkitRunnable periodicSave = new BukkitRunnable() {
@@ -180,7 +181,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin {
 
     @Override
     public String ver() {
-        return "1.1";
+        return "1.2";
     }
 
     @Override
@@ -190,6 +191,6 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin {
 
     @Override
     public String prefix() {
-        return ChatColor.translateAlternateColorCodes('&', "&8[&6AuctionHouse&8] » &r");
+        return Lang.translate("prefix");
     }
 }
