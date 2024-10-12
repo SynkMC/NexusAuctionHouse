@@ -3,8 +3,7 @@ package cc.synkdev.nah.gui;
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.components.BINAuction;
 import cc.synkdev.nah.manager.DataFileManager;
-import cc.synkdev.nah.manager.Lang;
-import cc.synkdev.nah.manager.Util;
+import cc.synkdev.synkLibs.bukkit.Lang;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -24,7 +23,7 @@ public class ConfirmSellGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     public Gui gui(Player p, int price) {
         Gui gui = Gui.gui()
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("confirmSell")))
+                .title(Component.text(ChatColor.YELLOW+ Lang.translate("confirmSell", core)))
                 .rows(4)
                 .disableAllInteractions()
                 .create();
@@ -42,8 +41,8 @@ public class ConfirmSellGui {
         ItemStack item = new ItemStack(Material.GREEN_WOOL);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("taxes", core.getTaxPercent()+"", tax+"")))));
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("confirm")));
+        meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("taxes", core, core.getTaxPercent()+"", tax+"")))));
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("confirm", core)));
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();
@@ -55,9 +54,9 @@ public class ConfirmSellGui {
                 pl.getInventory().setItemInMainHand(null);
                 core.runningBINs.put(bA, expire);
                 DataFileManager.sort();
-                pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successSell", price + ""));
+                pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successSell", core, price + ""));
                 pl.closeInventory();
-            } else pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughTaxes"));
+            } else pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughTaxes", core));
             pl.closeInventory();
         });
     }
@@ -65,7 +64,7 @@ public class ConfirmSellGui {
         ItemStack item = new ItemStack(Material.BARRIER);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("cancel")));
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("cancel", core)));
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();

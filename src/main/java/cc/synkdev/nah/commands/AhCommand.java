@@ -6,201 +6,188 @@ import cc.synkdev.nah.gui.ConfirmSellGui;
 import cc.synkdev.nah.gui.LogsGui;
 import cc.synkdev.nah.gui.MainGui;
 import cc.synkdev.nah.gui.RetrieveGui;
+import cc.synkdev.nah.manager.BannedItemsManager;
 import cc.synkdev.nah.manager.DataFileManager;
-import cc.synkdev.nah.manager.Lang;
 import cc.synkdev.nah.manager.Util;
+import cc.synkdev.synkLibs.bukkit.Lang;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.bukkit.Material.AIR;
-
-public class AhCommand implements CommandExecutor, TabExecutor {
+@CommandAlias("ah|nah|auctionhouse|nexusauctionhouse")
+public class AhCommand extends BaseCommand {
     CommandSender sender;
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        this.sender = sender;
-        if (args.length >= 2 && args[0].equalsIgnoreCase("search")) {
-            if (sender instanceof Player) {
-                if (args.length == 2) new MainGui().gui((Player) sender, 1, args[1]).open((Player) sender);
-                else {
-                    StringBuilder sb = new StringBuilder();
-                    int index = 0;
-                    for (int i = 1; i < args.length-1; i++) {
-                        index = i;
-                        sb.append(args[i]).append(" ");
-                    }
-                    sb.append(args[index+1]);
-                    new MainGui().gui((Player) sender, 1, sb.toString()).open((Player) sender);
-                }
-            } else sender.sendMessage(core.prefix()+ ChatColor.RED+Lang.translate("playerOnly"));
-        }
-        else if (args.length == 0) {
-            if (sender instanceof Player) {
-                new MainGui().gui((Player) sender, 1, null).open((Player) sender);
-            } else sender.sendMessage(core.prefix()+ ChatColor.RED+Lang.translate("playerOnly"));
-        } else if (args.length == 1) {
-            switch (args[0]) {
-                case "reload":
-                    if (checkPerm("nah.command.reload", true)) {
-                        long time = System.currentTimeMillis();
-                        core.save();
-                        new Lang().init();
-                        core.reloadConfig();
-                        time = System.currentTimeMillis()-time;
-                        sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("reloaded", time+""));
-                    }
-                    break;
-                case "expired":
-                    if (sender instanceof Player) {
-                        Player p = (Player) sender;
-                        if (!core.retrieveMap.containsKey(p)) {
-                            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noRetrieve"));
-                            return true;
-                        }
 
-                        new RetrieveGui().gui(p, 1).open(p);
-                    } else sender.sendMessage(core.prefix()+ ChatColor.RED+Lang.translate("playerOnly"));
-                    break;
-                case "sell":
-                    sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("sellUsage"));
-                    break;
-                case "logs":
-                    if (sender instanceof Player) {
-                        Player p = (Player) sender;
-                        if (!p.hasPermission("nah.menu.logs")) {
-                            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm"));
-                            return true;
-                        }
-
-                        new LogsGui().gui(p, 1).open(p);
-                    } else sender.sendMessage(core.prefix()+ ChatColor.RED+Lang.translate("playerOnly"));
-                    break;
-            }
-        } else if (args.length == 2) {
-            switch (args[0]) {
-                case "sell":
-                    if (sender instanceof Player) {
-                        Player p = (Player) sender;
-                        if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR || p.getInventory().getItemInMainHand().getAmount() == 0) {
-                            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("emptyHand"));
-                            return true;
-                        }
-
-                        int price;
-                        try {
-                            price = Integer.parseInt(args[1]);
-                        } catch (NumberFormatException e) {
-                            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber"));
-                            return true;
-                        }
-
-                        new ConfirmSellGui().gui(p, price).open(p);
-                    } else sender.sendMessage(core.prefix()+ ChatColor.RED+Lang.translate("playerOnly"));
-                    break;
-            }
-        } else if (args.length == 3) {
-            switch (args[0]) {
-                case "setprice":
-                    if (checkPerm("nah.manage.changeprice", true)) {
-                        String uuid = args[1];
-                        BINAuction bA = Util.getAuction(uuid);
-                        if (bA == null) {
-                            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("doesntExist"));
-                            return true;
-                        }
-
-                        int price;
-                        try {
-                            price = Integer.parseInt(args[2]);
-                        } catch (NumberFormatException e) {
-                            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber"));
-                            return true;
-                        }
-
-                        if (core.expiredBINs.contains(bA)) {
-                            core.expiredBINs.remove(bA);
-                            bA.setPrice(price);
-                            core.expiredBINs.add(bA);
-                        }
-
-                        if (core.runningBINs.containsKey(bA)) {
-                            core.runningBINs.remove(bA);
-                            bA.setPrice(price);
-                            core.runningBINs.put(bA, bA.getExpiry());
-                        }
-
-                        DataFileManager.sort();
-                        sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("successChangePrice", price+""));
-                    }
-                    break;
-                case "setexpiry":
-                    if (checkPerm("nah.manage.changeexpiry", true)) {
-                        String uuid = args[1];
-                        BINAuction bA = Util.getAuction(uuid);
-                        if (bA == null) {
-                            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("doesntExist"));
-                            return true;
-                        }
-
-                        int expiry;
-                        try {
-                            expiry = Integer.parseInt(args[2]);
-                        } catch (NumberFormatException e) {
-                            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber"));
-                            return true;
-                        }
-
-                        if (core.expiredBINs.contains(bA)) {
-                            core.expiredBINs.remove(bA);
-                            bA.setExpiry(expiry);
-                            core.expiredBINs.add(bA);
-                        }
-
-                        if (core.runningBINs.containsKey(bA)) {
-                            core.runningBINs.remove(bA);
-                            bA.setExpiry(expiry);
-                            core.runningBINs.put(bA, bA.getExpiry());
-                        }
-
-                        DataFileManager.sort();
-                        sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("successChangeExpiry", expiry+""));
-                    }
-                    break;
-            }
-        }
-        return true;
+    @Default
+    public void onDefault(Player p) {
+        new MainGui().gui(p, 1, null).open(p);
     }
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        this.sender = sender;
-        List<String> comps = new ArrayList<>();
-        if (args.length == 1) {
-            comps.add("sell");
-            comps.add("search");
-            if (checkPerm("nah.command.reload", false)) {
-                comps.add("reload");
+    @Subcommand("search")
+    @Syntax("/ah search [query]")
+    public void onSearch (Player p, String[] args) {
+        if (args.length == 1) new MainGui().gui(p, 1, args[1]).open(p);
+        else {
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < args.length-1; i++) {
+                index = i;
+                sb.append(args[i]).append(" ");
             }
-            if (checkPerm("nah.menu.logs", false)) {
-                comps.add("logs");
-            }
+            sb.append(args[index+1]);
+            new MainGui().gui(p, 1, sb.toString()).open(p);
         }
-        return comps;
     }
-    private Boolean checkPerm(String s, Boolean msg) {
-        Boolean has = sender.hasPermission(s);
-        if (msg && !has) {
-            sender.sendMessage(core.prefix()+ ChatColor.RED+Lang.translate("noPerm"));
+
+    @Subcommand("reload")
+    @CommandPermission("nah.command.reload")
+    public void onReload(CommandSender sender) {
+        long time = System.currentTimeMillis();
+        core.save();
+        core.reloadLang();
+        core.reloadConfig();
+        time = System.currentTimeMillis()-time;
+        sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("reloaded", core, time+""));
+    }
+
+    @Subcommand("expired")
+    public void onExpired(Player p) {
+        if (!core.retrieveMap.containsKey(p)) {
+            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noRetrieve", core));
+            return;
         }
-        return has;
+
+        new RetrieveGui().gui(p, 1).open(p);
+    }
+
+    @Subcommand("sell")
+    @Syntax("/ah sell <price>")
+    public void onSell(Player p, String[] args) {
+        if (args.length == 0) sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("sellUsage", core));
+        else if (args.length == 1) {
+            if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR || p.getInventory().getItemInMainHand().getAmount() == 0) {
+                p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("emptyHand", core));
+                return;
+            }
+
+            if (core.banned.contains(p.getInventory().getItemInMainHand().getType())) {
+                sender.sendMessage(core.prefix()+Lang.translate("sellBanned", core));
+                return;
+            }
+
+            int price;
+            try {
+                price = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber", core));
+                return;
+            }
+
+            new ConfirmSellGui().gui(p, price).open(p);
+        }
+    }
+
+    @Subcommand("logs")
+    @CommandPermission("nah.command.logs")
+    public void onLogs(Player p) {
+        new LogsGui().gui(1).open(p);
+    }
+
+    @Subcommand("setprice")
+    @CommandPermission("nah.manage.changeprice")
+    public void onSetprice(CommandSender sender, String[] args) {
+        String uuid = args[0];
+        BINAuction bA = Util.getAuction(uuid);
+        if (bA == null) {
+            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("doesntExist", core));
+            return;
+        }
+
+        int price;
+        try {
+            price = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber", core));
+            return;
+        }
+
+        if (core.expiredBINs.contains(bA)) {
+            core.expiredBINs.remove(bA);
+            bA.setPrice(price);
+            core.expiredBINs.add(bA);
+        }
+
+        if (core.runningBINs.containsKey(bA)) {
+            core.runningBINs.remove(bA);
+            bA.setPrice(price);
+            core.runningBINs.put(bA, bA.getExpiry());
+        }
+
+        DataFileManager.sort();
+        sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("successChangePrice", core, price+""));
+    }
+
+    @Subcommand("setexpiry")
+    @CommandPermission("nah.manage.changeexpiry")
+    public void onSetexpiry(CommandSender sender, String[] args) {
+        String uuid = args[0];
+        BINAuction bA = Util.getAuction(uuid);
+        if (bA == null) {
+            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("doesntExist", core));
+            return;
+        }
+
+        int expiry;
+        try {
+            expiry = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber", core));
+            return;
+        }
+
+        if (core.expiredBINs.contains(bA)) {
+            core.expiredBINs.remove(bA);
+            bA.setExpiry(expiry);
+            core.expiredBINs.add(bA);
+        }
+
+        if (core.runningBINs.containsKey(bA)) {
+            core.runningBINs.remove(bA);
+            bA.setExpiry(expiry);
+            core.runningBINs.put(bA, bA.getExpiry());
+        }
+
+        DataFileManager.sort();
+        sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("successChangeExpiry", core, expiry+""));
+    }
+
+    @Subcommand("ban")
+    @CommandPermission("nah.command.ban")
+    public void onBan(Player p) {
+        if (p.getInventory().getItemInMainHand() == null) {
+            p.sendMessage(core.prefix()+ChatColor.RED+"Couldn't ban the item in your hand since it is empty!");
+            return;
+        }
+
+        Material m = p.getInventory().getItemInMainHand().getType();
+        BannedItemsManager.add(m);
+        p.sendMessage(core.prefix()+ChatColor.GREEN+"Made "+m.name()+" not sellable on the AH!");
+    }
+
+    @Subcommand("unban")
+    @CommandPermission("nah.command.ban")
+    public void onUnban(Player p) {
+        if (p.getInventory().getItemInMainHand() == null) {
+            p.sendMessage(core.prefix()+ChatColor.RED+"Couldn't unban the item in your hand since it is empty!");
+            return;
+        }
+
+        Material m = p.getInventory().getItemInMainHand().getType();
+        BannedItemsManager.remove(m);
+        p.sendMessage(core.prefix()+ChatColor.GREEN+"Made "+m.name()+" sellable on the AH!");
     }
 }

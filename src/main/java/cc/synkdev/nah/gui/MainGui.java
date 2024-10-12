@@ -3,7 +3,7 @@ package cc.synkdev.nah.gui;
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.components.BINAuction;
 import cc.synkdev.nah.components.SortingTypes;
-import cc.synkdev.nah.manager.Lang;
+import cc.synkdev.synkLibs.bukkit.Lang;
 import cc.synkdev.nah.manager.Util;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
@@ -28,7 +28,7 @@ public class MainGui {
         SortingTypes sort = core.playerSortingTypes.getOrDefault(p, SortingTypes.PRICEMIN);
         Gui gui = Gui.gui()
                 .disableAllInteractions()
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("ah")))
+                .title(Component.text(ChatColor.YELLOW+ Lang.translate("ah", core)))
                 .rows(6)
                 .create();
         if (page > 1) gui.setItem(6, 4, arrowLeft(page));
@@ -40,22 +40,20 @@ public class MainGui {
         return gui;
     }
     GuiItem arrowLeft(int page) {
-        GuiItem item = ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage"))))
+        return ItemBuilder.from(Material.ARROW)
+                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, page-1, null).open(p);
                 });
-        return item;
     }
     GuiItem arrowRight(int page) {
-        GuiItem item = ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage"))))
+        return ItemBuilder.from(Material.ARROW)
+                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, page+1, null).open(p);
                 });
-        return item;
     }
     private void fillGui(Gui gui, Player p, int page, SortingTypes sort) {
         int min = 45*(page-1);
@@ -78,9 +76,9 @@ public class MainGui {
         ItemStack copy = bA.getItem().clone();
         List<Component> lore = new ArrayList<>();
         lore.addAll(Util.loreToComps(bA.getItem()));
-        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+"---------------"), Component.text(""), Component.text(ChatColor.YELLOW+ Lang.translate("buyNow", Integer.toString(bA.getPrice()))), Component.text(""), Component.text(ChatColor.YELLOW+Lang.translate("expires")+" "+Util.convertSecondsToTime(bA.getExpiry())), Component.text(""), Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e"+Lang.translate("seller", bA.getSeller().getName())))));
-        if (staff) lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.GREEN+"---------------"), Component.text(""), Component.text(ChatColor.GREEN+ Lang.translate("staffMenu"))));
-        GuiItem item = ItemBuilder.from(copy)
+        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+"---------------"), Component.text(""), Component.text(ChatColor.YELLOW+ Lang.translate("buyNow", core, Integer.toString(bA.getPrice()))), Component.text(""), Component.text(ChatColor.YELLOW+Lang.translate("expires", core)+" "+Util.convertSecondsToTime(bA.getExpiry())), Component.text(""), Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e"+Lang.translate("seller", core, bA.getSeller().getName())))));
+        if (staff) lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.GREEN+"---------------"), Component.text(""), Component.text(ChatColor.GREEN+ Lang.translate("staffMenu", core))));
+        return ItemBuilder.from(copy)
                 .lore(lore)
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
@@ -89,14 +87,13 @@ public class MainGui {
                         return;
                     }
 
-                    new ConfirmBuyGui().gui(p, bA).open(p);
+                    new ConfirmBuyGui().gui(bA).open(p);
                 });
-        return item;
     }
     GuiItem sorter(Player p, int page, String search) {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text(""));
-        lore.add(Component.text(ChatColor.RESET+""+ChatColor.YELLOW+Lang.translate("clickScroll")));
+        lore.add(Component.text(ChatColor.RESET+""+ChatColor.YELLOW+Lang.translate("clickScroll", core)));
         lore.add(Component.text(""));
         for (SortingTypes sT : core.sortingTypes) {
             String arrow = ChatColor.RESET+""+ChatColor.YELLOW+"-> "+ChatColor.BOLD;
@@ -104,7 +101,7 @@ public class MainGui {
             else lore.add(Component.text(ChatColor.RESET+""+ChatColor.YELLOW+sT.string));
         }
 
-        GuiItem gui = ItemBuilder.from(Material.HOPPER)
+        return ItemBuilder.from(Material.HOPPER)
                 .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&8&lSort")))
                 .lore(lore)
                 .asGuiItem(event -> {
@@ -129,16 +126,15 @@ public class MainGui {
                     }
                     gui(p, page, search).open(p);
                 });
-        return gui;
     }
     GuiItem search() {
-        GuiItem item = ItemBuilder.from(Material.SIGN)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e"+Lang.translate("clickSearch"))))
+        return ItemBuilder.from(Material.SIGN)
+                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e"+Lang.translate("clickSearch", core))))
                 .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
 
-                    TextComponent comp = new TextComponent("["+Lang.translate("clickSearch")+"]");
+                    TextComponent comp = new TextComponent("["+Lang.translate("clickSearch", core)+"]");
                     comp.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
                     comp.setBold(true);
                     comp.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ah search "));
@@ -146,6 +142,5 @@ public class MainGui {
                     p.spigot().sendMessage(comp);
                     p.closeInventory();
                 });
-        return item;
     }
 }

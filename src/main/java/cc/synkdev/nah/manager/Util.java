@@ -3,6 +3,7 @@ package cc.synkdev.nah.manager;
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.components.BINAuction;
 import cc.synkdev.nah.components.SortingTypes;
+import cc.synkdev.synkLibs.bukkit.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -49,9 +50,7 @@ public class Util {
         List<Component> list = new ArrayList<>();
         if (item.getItemMeta().getLore() == null) return list;
 
-        item.getItemMeta().getLore().forEach(s -> {
-            list.add(Component.text(s));
-        });
+        item.getItemMeta().getLore().forEach(s -> list.add(Component.text(s)));
         return list;
     }
     public static String convertSecondsToTime(long seconds) {
@@ -67,19 +66,19 @@ public class Util {
         StringBuilder timeString = new StringBuilder();
 
         if (weeks > 0) {
-            timeString.append(weeks).append(" ").append(Lang.translate("week"));
+            timeString.append(weeks).append(" ").append(Lang.translate("week", core));
             timeString.append(", ");
         }
         if (days > 0) {
-            timeString.append(days).append(" ").append(Lang.translate("day"));
+            timeString.append(days).append(" ").append(Lang.translate("day", core));
             timeString.append(", ");
         }
         if (hours > 0) {
-            timeString.append(hours).append(" ").append(Lang.translate("hour"));
+            timeString.append(hours).append(" ").append(Lang.translate("hour", core));
             timeString.append(", ");
         }
         if (minutes > 0) {
-            timeString.append(minutes).append(" ").append(Lang.translate("minute"));
+            timeString.append(minutes).append(" ").append(Lang.translate("minute", core));
             timeString.append(", ");
         }
 

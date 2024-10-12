@@ -8,9 +8,3 @@ website: https://synkdev.cc
 depend:
   - SynkLibs
   - Vault
-commands:
-  ah:
-    description: "Main plugin command"
-    aliases:
-      - "nah"
-      - "nexusauctionhouse"

@@ -1,7 +1,7 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.nah.manager.Lang;
+import cc.synkdev.synkLibs.bukkit.Lang;
 import cc.synkdev.nah.manager.Util;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
@@ -23,7 +23,7 @@ public class RetrieveGui {
         max = (core.retrieveMap.getOrDefault(p, new ArrayList<>()).size()/10)+1;
         Gui gui = Gui.gui()
                 .disableAllInteractions()
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("titleRetrieve")))
+                .title(Component.text(ChatColor.YELLOW+ Lang.translate("titleRetrieve", core)))
                 .rows(6)
                 .create();
         if (page > 1) gui.setItem(6, 4, arrowLeft(page));
@@ -32,22 +32,20 @@ public class RetrieveGui {
         return gui;
     }
     GuiItem arrowLeft(int page) {
-        GuiItem item = ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage"))))
+        return ItemBuilder.from(Material.ARROW)
+                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, page-1).open(p);
                 });
-        return item;
     }
     GuiItem arrowRight(int page) {
-        GuiItem item = ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage"))))
+        return ItemBuilder.from(Material.ARROW)
+                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, page+1).open(p);
                 });
-        return item;
     }
     private void fillGui(Gui gui, Player p, int page) {
         int min = 45*(page-1);
@@ -61,8 +59,8 @@ public class RetrieveGui {
     GuiItem item(ItemStack item, int page) {
         List<Component> lore = new ArrayList<>();
         lore.addAll(Util.loreToComps(item));
-        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+"---------------"), Component.text(""), Component.text(ChatColor.YELLOW+Lang.translate("clickRetrieve"))));
-        GuiItem gitem = ItemBuilder.from(item.clone())
+        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+"---------------"), Component.text(""), Component.text(ChatColor.YELLOW+Lang.translate("clickRetrieve", core))));
+        return ItemBuilder.from(item.clone())
                 .lore(lore)
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
@@ -80,6 +78,5 @@ public class RetrieveGui {
                         }
                     }
                 });
-        return gitem;
     }
 }
