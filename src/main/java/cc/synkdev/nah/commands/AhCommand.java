@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("ah|nah|auctionhouse|nexusauctionhouse")
 public class AhCommand extends BaseCommand {
-    CommandSender sender;
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
 
     @Default
@@ -30,7 +29,10 @@ public class AhCommand extends BaseCommand {
     @Subcommand("search")
     @Syntax("/ah search [query]")
     public void onSearch (Player p, String[] args) {
-        if (args.length == 1) new MainGui().gui(p, 1, args[1]).open(p);
+        if (args.length == 0) {
+
+        }
+        else if (args.length == 1) new MainGui().gui(p, 1, args[1]).open(p);
         else {
             StringBuilder sb = new StringBuilder();
             int index = 0;
@@ -67,7 +69,7 @@ public class AhCommand extends BaseCommand {
     @Subcommand("sell")
     @Syntax("/ah sell <price>")
     public void onSell(Player p, String[] args) {
-        if (args.length == 0) sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("sellUsage", core));
+        if (args.length == 0) p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("sellUsage", core));
         else if (args.length == 1) {
             if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR || p.getInventory().getItemInMainHand().getAmount() == 0) {
                 p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("emptyHand", core));
@@ -75,7 +77,7 @@ public class AhCommand extends BaseCommand {
             }
 
             if (core.banned.contains(p.getInventory().getItemInMainHand().getType())) {
-                sender.sendMessage(core.prefix()+Lang.translate("sellBanned", core));
+                p.sendMessage(core.prefix()+Lang.translate("sellBanned", core));
                 return;
             }
 
