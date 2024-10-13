@@ -32,7 +32,7 @@ public class AhCommand extends BaseCommand {
         if (args.length == 0) {
 
         }
-        else if (args.length == 1) new MainGui().gui(p, 1, args[1]).open(p);
+        else if (args.length == 1) new MainGui().gui(p, 1, args[0]).open(p);
         else {
             StringBuilder sb = new StringBuilder();
             int index = 0;
@@ -111,7 +111,7 @@ public class AhCommand extends BaseCommand {
 
         int price;
         try {
-            price = Integer.parseInt(args[2]);
+            price = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber", core));
             return;
