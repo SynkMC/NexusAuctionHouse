@@ -237,7 +237,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public void onDisable() {
-        DataFileManager.save();
+        if (missingDeps.isEmpty()) DataFileManager.save();
     }
 
     @Override
