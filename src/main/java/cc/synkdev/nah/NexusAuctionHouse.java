@@ -88,9 +88,6 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
             new Metrics(this, 23102);
 
-            SynkLibs.setSpl(this);
-            Utils.checkUpdate(this);
-
             dlConfig();
             loadConfig();
 
@@ -114,7 +111,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
             // causes server crash
             // bCM.setDefaultExceptionHandler(new GlobalErrorHandler("https://discord.com/api/webhooks/1294577862359257129/W7BssLiR8LpvfA7KeiAsBerXMHGvxB-1o0lKL70ly5RviPKwM4omvnXibqsKHkhsYAHW"));
-            Thread.setDefaultUncaughtExceptionHandler(new GlobalErrorHandler("https://discord.com/api/webhooks/1294577862359257129/W7BssLiR8LpvfA7KeiAsBerXMHGvxB-1o0lKL70ly5RviPKwM4omvnXibqsKHkhsYAHW"));
+            // Thread.setDefaultUncaughtExceptionHandler(new GlobalErrorHandler("https://discord.com/api/webhooks/1294577862359257129/W7BssLiR8LpvfA7KeiAsBerXMHGvxB-1o0lKL70ly5RviPKwM4omvnXibqsKHkhsYAHW"));
 
             Bukkit.getPluginManager().registerEvents(new EventHandler(), this);
 
@@ -250,7 +247,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "1.4";
+        return "1.4.1";
     }
 
     @Override
