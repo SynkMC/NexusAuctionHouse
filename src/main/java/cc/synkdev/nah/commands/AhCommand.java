@@ -23,7 +23,9 @@ public class AhCommand extends BaseCommand {
 
     @Default
     public void onDefault(Player p) {
-        new MainGui().gui(p, 1, null).open(p);
+        if (p.hasPermission("nah.gui.open") || !p.isPermissionSet("nah.gui.open")) {
+            new MainGui().gui(p, 1, null).open(p);
+        }
     }
 
     @Subcommand("search")
