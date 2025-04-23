@@ -1,20 +1,16 @@
 package cc.synkdev.nah;
 
 import cc.synkdev.nah.commands.AhCommand;
-import cc.synkdev.nah.components.BINAuction;
-import cc.synkdev.nah.components.SortingTypes;
-import cc.synkdev.nah.manager.BannedItemsManager;
-import cc.synkdev.nah.manager.DataFileManager;
-import cc.synkdev.nah.manager.EventHandler;
-import cc.synkdev.nah.manager.Util;
+import cc.synkdev.nah.objects.BINAuction;
+import cc.synkdev.nah.objects.SortingTypes;
+import cc.synkdev.nah.manager.*;
 import cc.synkdev.synkLibs.bukkit.Lang;
-import cc.synkdev.synkLibs.bukkit.SynkLibs;
 import cc.synkdev.synkLibs.bukkit.Utils;
-import cc.synkdev.synkLibs.components.GlobalErrorHandler;
 import cc.synkdev.synkLibs.components.SynkPlugin;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageKeys;
 import lombok.Getter;
+import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -55,6 +51,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
     public Map<String, String> langMap = new HashMap<>();
     public List<Material> banned = new ArrayList<>();
     public List<String> missingDeps = new ArrayList<>();
+    @Getter @Setter private Boolean toggle = true;
 
     @Override
     public void onEnable() {
@@ -98,6 +95,8 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
             DataFileManager.sort();
 
             BannedItemsManager.read();
+            ToggleManager.read();
+            WebhookManager.read();
 
             sortingTypes = new ArrayList<>(Arrays.asList(SortingTypes.PRICEMIN, SortingTypes.PRICEMAX, SortingTypes.LATESTPOSTED, SortingTypes.EXPIRESSOON));
 
@@ -108,10 +107,6 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
             bCM.getLocales().addMessage(bCM.getLocales().getDefaultLocale(), MessageKeys.UNKNOWN_COMMAND, Lang.translate("noCmd", this));
 
             bCM.registerCommand(new AhCommand());
-
-            // causes server crash
-            // bCM.setDefaultExceptionHandler(new GlobalErrorHandler("https://discord.com/api/webhooks/1294577862359257129/W7BssLiR8LpvfA7KeiAsBerXMHGvxB-1o0lKL70ly5RviPKwM4omvnXibqsKHkhsYAHW"));
-            // Thread.setDefaultUncaughtExceptionHandler(new GlobalErrorHandler("https://discord.com/api/webhooks/1294577862359257129/W7BssLiR8LpvfA7KeiAsBerXMHGvxB-1o0lKL70ly5RviPKwM4omvnXibqsKHkhsYAHW"));
 
             Bukkit.getPluginManager().registerEvents(new EventHandler(), this);
 
@@ -160,12 +155,13 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
             for (BINAuction bA : list) {
                 runningBINs.remove(bA);
                 expiredBINs.add(bA);
+                WebhookManager.sendWebhook("listing-expired", null, bA.getSeller().getName());
                 if (retrieveMap.containsKey(bA.getSeller())) {
                     List<ItemStack> users = new ArrayList<>(retrieveMap.get(bA.getSeller()));
                     users.add(bA.getItem());
                     retrieveMap.replace(bA.getSeller(), users);
                 } else {
-                    retrieveMap.put(bA.getSeller(), new ArrayList<>(Arrays.asList(bA.getItem())));
+                    retrieveMap.put(bA.getSeller(), new ArrayList<>(Collections.singletonList(bA.getItem())));
                 }
             }
             DataFileManager.sort();
@@ -247,7 +243,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "1.4.2";
+        return "1.5";
     }
 
     @Override

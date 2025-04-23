@@ -1,12 +1,14 @@
 package cc.synkdev.nah.manager;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.nah.components.BINAuction;
-import cc.synkdev.nah.components.SortingTypes;
+import cc.synkdev.nah.objects.BINAuction;
+import cc.synkdev.nah.objects.SortingTypes;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
@@ -122,7 +124,6 @@ public class Util {
         }
         return list;
     }
-
     public static List<BINAuction> reverseList(List<BINAuction> list) {
         List<BINAuction> listT = new ArrayList<>();
         for (int i = list.size()-1; i >= 0; i--) {
@@ -130,18 +131,23 @@ public class Util {
         }
         return listT;
     }
-    public static BINAuction getAuction(String uuid) {
-        AtomicReference<BINAuction> bA = new AtomicReference<>();
-        core.runningBINs.forEach((binAuction, integer) -> {
-            if (binAuction.getUuid().toString().equals(uuid)) bA.set(binAuction);
-        });
-
-        for (BINAuction binAuction : core.expiredBINs) {
-            if (binAuction.getUuid().toString().equals(uuid)) bA.set(binAuction);
+    public static String addPlaceholders (String s, String... args) {
+        int i = 0;
+        for (String arg : args) {
+            s = s.replace("%s"+(i+1)+"%", arg);
+            i++;
         }
-        return bA.get();
+        return s;
     }
-    public static BINAuction getAuction(UUID uuid) {
-        return getAuction(uuid.toString());
+    public static String sanitizeDiscordMsg(String input) {
+        if (input == null) return "";
+        return input
+                .replace("\\", "\\\\")
+                .replace("*", "\\*")
+                .replace("_", "\\_")
+                .replace("~", "\\~")
+                .replace("`", "\\`");
     }
+
+
 }

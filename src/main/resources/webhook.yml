@@ -1,0 +1,22 @@
+enabled: false
+url: "https://discord.com/api/webhooks/00000000000000000000/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+alerts:
+  new-listing: true
+  listing-bought: true
+  listing-expired: true
+  listing-edited: true
+  ah-toggle: true
+webhook-titles:
+  new-listing: "New auction listed!"
+  listing-bought: "An auction was bought!"
+  listing-expired: "An auction has expired!"
+  listing-edited: "An auction was edited!"
+  ah-toggle: "The auction house has been toggled!"
+webhook-descriptions:
+  new-listing: "%s1% just listed an item for $%s2%"
+  listing-bought: "%s1% just bought an item from %s2% for $%s3%"
+  listing-expired: "An auction listed by %s1% has expired!"
+  listing-edited: "An auction was edited by %s1%!"
+  ah-toggle: "The auction house has been toggled %s1%!"
+  on: "On"
+  off: "Off"

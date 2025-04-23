@@ -6,7 +6,7 @@
 
     <groupId>cc.synkdev</groupId>
     <artifactId>NexusAuctionHouse</artifactId>
-    <version>1.4.2</version>
+    <version>1.5</version>
     <packaging>jar</packaging>
 
     <name>NexusAuctionHouse</name>

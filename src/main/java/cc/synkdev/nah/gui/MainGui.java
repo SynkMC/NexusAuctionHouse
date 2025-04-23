@@ -1,8 +1,8 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.nah.components.BINAuction;
-import cc.synkdev.nah.components.SortingTypes;
+import cc.synkdev.nah.objects.BINAuction;
+import cc.synkdev.nah.objects.SortingTypes;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import cc.synkdev.nah.manager.Util;
 import dev.triumphteam.gui.builder.item.ItemBuilder;

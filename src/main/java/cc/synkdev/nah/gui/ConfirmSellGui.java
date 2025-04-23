@@ -1,7 +1,8 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.nah.components.BINAuction;
+import cc.synkdev.nah.manager.WebhookManager;
+import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.manager.DataFileManager;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -56,6 +57,7 @@ public class ConfirmSellGui {
                 DataFileManager.sort();
                 pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successSell", core, price + ""));
                 pl.closeInventory();
+                WebhookManager.sendWebhook("new-listing", null, pl.getName(), price+"");
             } else pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughTaxes", core));
             pl.closeInventory();
         });

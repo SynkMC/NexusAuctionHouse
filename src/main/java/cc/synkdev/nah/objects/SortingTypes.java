@@ -1,4 +1,4 @@
-package cc.synkdev.nah.components;
+package cc.synkdev.nah.objects;
 
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.synkLibs.bukkit.Lang;

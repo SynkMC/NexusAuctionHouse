@@ -1,7 +1,8 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.nah.components.BINAuction;
+import cc.synkdev.nah.manager.WebhookManager;
+import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.manager.DataFileManager;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -51,6 +52,8 @@ public class ConfirmBuyGui {
                     bA.setBuyer(pl);
                     core.expiredBINs.add(bA);
                     DataFileManager.sort();
+                    pl.closeInventory();
+                    WebhookManager.sendWebhook("listing-bought", null, pl.getName(), bA.getSeller().getName(), bA.getPrice()+"");
                     pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successBuy", core, bA.getSeller().getName(), bA.getPrice()+""));
                 } else pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughBuy", core));
             } else pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("buyFromYou", core));

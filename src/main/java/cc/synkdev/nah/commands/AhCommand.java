@@ -1,17 +1,16 @@
 package cc.synkdev.nah.commands;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.nah.components.BINAuction;
+import cc.synkdev.nah.manager.*;
+import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.gui.ConfirmSellGui;
 import cc.synkdev.nah.gui.LogsGui;
 import cc.synkdev.nah.gui.MainGui;
 import cc.synkdev.nah.gui.RetrieveGui;
-import cc.synkdev.nah.manager.BannedItemsManager;
-import cc.synkdev.nah.manager.DataFileManager;
-import cc.synkdev.nah.manager.Util;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -23,9 +22,7 @@ public class AhCommand extends BaseCommand {
 
     @Default
     public void onDefault(Player p) {
-        if (p.hasPermission("nah.gui.open") || !p.isPermissionSet("nah.gui.open")) {
-            new MainGui().gui(p, 1, null).open(p);
-        }
+        NAHUtil.open(p, false);
     }
 
     @Subcommand("search")
@@ -50,22 +47,13 @@ public class AhCommand extends BaseCommand {
     @Subcommand("reload")
     @CommandPermission("nah.command.reload")
     public void onReload(CommandSender sender) {
-        long time = System.currentTimeMillis();
-        core.save();
-        core.reloadLang();
-        core.reloadConfig();
-        time = System.currentTimeMillis()-time;
+        long time = NAHUtil.reload();
         sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("reloaded", core, time+""));
     }
 
     @Subcommand("expired")
     public void onExpired(Player p) {
-        if (!core.retrieveMap.containsKey(p)) {
-            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noRetrieve", core));
-            return;
-        }
-
-        new RetrieveGui().gui(p, 1).open(p);
+        NAHUtil.openExpiredGui(p);
     }
 
     @Subcommand("sell")
@@ -80,6 +68,11 @@ public class AhCommand extends BaseCommand {
 
             if (core.banned.contains(p.getInventory().getItemInMainHand().getType())) {
                 p.sendMessage(core.prefix()+Lang.translate("sellBanned", core));
+                return;
+            }
+
+            if (NAHUtil.getSlotsLimit(p) != -1 && (NAHUtil.getUsedSlots(p)+1) >= NAHUtil.getSlotsLimit(p)) {
+                p.sendMessage(Lang.translate("slots-cap", core, NAHUtil.getSlotsLimit(p)+""));
                 return;
             }
 
@@ -98,14 +91,14 @@ public class AhCommand extends BaseCommand {
     @Subcommand("logs")
     @CommandPermission("nah.command.logs")
     public void onLogs(Player p) {
-        new LogsGui().gui(1).open(p);
+        NAHUtil.openLogs(p);
     }
 
     @Subcommand("setprice")
     @CommandPermission("nah.manage.changeprice")
     public void onSetprice(CommandSender sender, String[] args) {
         String uuid = args[0];
-        BINAuction bA = Util.getAuction(uuid);
+        BINAuction bA = NAHUtil.getAuction(uuid);
         if (bA == null) {
             sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("doesntExist", core));
             return;
@@ -118,28 +111,18 @@ public class AhCommand extends BaseCommand {
             sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber", core));
             return;
         }
-
-        if (core.expiredBINs.contains(bA)) {
-            core.expiredBINs.remove(bA);
-            bA.setPrice(price);
-            core.expiredBINs.add(bA);
-        }
-
-        if (core.runningBINs.containsKey(bA)) {
-            core.runningBINs.remove(bA);
-            bA.setPrice(price);
-            core.runningBINs.put(bA, bA.getExpiry());
-        }
-
-        DataFileManager.sort();
+        String sendr = "Console";
+        if (sender instanceof Player) sendr = ((Player) sender).getName();
+        NAHUtil.setPrice(bA, price, sendr);
         sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("successChangePrice", core, price+""));
+
     }
 
     @Subcommand("setexpiry")
     @CommandPermission("nah.manage.changeexpiry")
     public void onSetexpiry(CommandSender sender, String[] args) {
         String uuid = args[0];
-        BINAuction bA = Util.getAuction(uuid);
+        BINAuction bA = NAHUtil.getAuction(uuid);
         if (bA == null) {
             sender.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("doesntExist", core));
             return;
@@ -153,19 +136,10 @@ public class AhCommand extends BaseCommand {
             return;
         }
 
-        if (core.expiredBINs.contains(bA)) {
-            core.expiredBINs.remove(bA);
-            bA.setExpiry(expiry);
-            core.expiredBINs.add(bA);
-        }
 
-        if (core.runningBINs.containsKey(bA)) {
-            core.runningBINs.remove(bA);
-            bA.setExpiry(expiry);
-            core.runningBINs.put(bA, bA.getExpiry());
-        }
-
-        DataFileManager.sort();
+        String sendr = "Console";
+        if (sender instanceof Player) sendr = ((Player) sender).getName();
+        NAHUtil.setExpiry(bA, expiry, sendr);
         sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("successChangeExpiry", core, expiry+""));
     }
 
@@ -178,7 +152,7 @@ public class AhCommand extends BaseCommand {
         }
 
         Material m = p.getInventory().getItemInMainHand().getType();
-        BannedItemsManager.add(m);
+        NAHUtil.ban(m);
         p.sendMessage(core.prefix()+ChatColor.GREEN+"Made "+m.name()+" not sellable on the AH!");
     }
 
@@ -191,7 +165,14 @@ public class AhCommand extends BaseCommand {
         }
 
         Material m = p.getInventory().getItemInMainHand().getType();
-        BannedItemsManager.remove(m);
+        NAHUtil.unban(m);
         p.sendMessage(core.prefix()+ChatColor.GREEN+"Made "+m.name()+" sellable on the AH!");
+    }
+
+    @Subcommand("toggle")
+    @CommandPermission("nah.command.toggle")
+    @Description("Toggle the auction house")
+    public void onToggle () {
+        NAHUtil.toggle();
     }
 }
