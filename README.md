@@ -43,8 +43,8 @@ The JavaDocs can be found [here](https://synkdev.cc/storage/javadocs/nah)
 	<dependency>
 	    <groupId>com.github.SynkMC</groupId>
 	    <artifactId>NexusAuctionHouse</artifactId>
-	    <version>{VERSION}</version> <- Replace this
-      <scope>provided</scope>
+	    <version>{VERSION}</version> <!-- Replace this -->
+	    <scope>provided</scope>
 	</dependency>
 ```
 #### For Gradle:
