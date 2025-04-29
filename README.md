@@ -13,6 +13,7 @@ A simple and optimized Auction House plugin
 - /ah search - Search for items in the Auction House 
 - /ah sell <price> - list an item on the Auction House 
 - /ah logs - opens the list of sold items - nah.menu.logs
+- /ah toggle - toggles the AH on or off - nah.command.reload
 
 ## Features
 - Searching
@@ -20,4 +21,43 @@ A simple and optimized Auction House plugin
 - Admin control
 - Listing fee
 - Expiry
-- Logging for admins 
+- Logging for admins
+- Item banning
+- Webhook notifications
+- Slots cap customization
+
+## Developer API
+The plugin now features a developer API.
+The JavaDocs can be found [here](https://synkdev.cc/storage/javadocs/nah)
+
+### Dependency information:
+#### For Maven:
+```xml
+    <repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+    </repositories>
+
+	<dependency>
+	    <groupId>com.github.SynkMC</groupId>
+	    <artifactId>NexusAuctionHouse</artifactId>
+	    <version>{VERSION}</version> <!-- Replace this -->
+	    <scope>provided</scope>
+	</dependency>
+```
+#### For Gradle:
+```groovy
+dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
+
+dependencies {
+	        implementation 'com.github.SynkMC:NexusAuctionHouse:1.5'
+	}
+```
