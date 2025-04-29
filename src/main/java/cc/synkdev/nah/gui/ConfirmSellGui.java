@@ -1,6 +1,7 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
+import cc.synkdev.nah.api.events.ItemListEvent;
 import cc.synkdev.nah.manager.WebhookManager;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.manager.DataFileManager;
@@ -9,6 +10,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,6 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
 
 public class ConfirmSellGui {
@@ -31,14 +34,14 @@ public class ConfirmSellGui {
         gui.setItem(2, 5, item(p));
         gui.setItem(3, 3, confirm(price));
         gui.setItem(3, 7, cancel());
-
         return gui;
     }
+
     GuiItem item(Player p) {
         return ItemBuilder.from(p.getInventory().getItemInMainHand()).asGuiItem();
     }
     GuiItem confirm(int price) {
-        double tax = price*((double) core.getTaxPercent() /100);
+        int tax = Math.toIntExact(Math.round(price*((double) core.getTaxPercent() /100)));
         ItemStack item = new ItemStack(Material.GREEN_WOOL);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -51,13 +54,19 @@ public class ConfirmSellGui {
             if (core.getEcon().has(pl, tax)) {
                 core.getEcon().withdrawPlayer(pl, tax);
                 int expire = Math.toIntExact(System.currentTimeMillis() / 1000) + core.getExpireTime();
-                BINAuction bA = new BINAuction(UUID.randomUUID(), pl, itemStack, price, expire);
+
+                ItemListEvent listEvent = new ItemListEvent(pl, itemStack, price, new Date(expire * 1000L));
+                Bukkit.getPluginManager().callEvent(listEvent);
+
+                if (listEvent.isCancelled()) return;
+
+                BINAuction bA = new BINAuction(UUID.randomUUID(), listEvent.getPlayer(), listEvent.getItem(), listEvent.getPrice(), listEvent.getExpiry().getSeconds());
                 pl.getInventory().setItemInMainHand(null);
                 core.runningBINs.put(bA, expire);
                 DataFileManager.sort();
                 pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successSell", core, price + ""));
                 pl.closeInventory();
-                WebhookManager.sendWebhook("new-listing", null, pl.getName(), price+"");
+                WebhookManager.sendWebhook("new-listing", bA, listEvent.getPlayer().getName(), listEvent.getPrice()+"");
             } else pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughTaxes", core));
             pl.closeInventory();
         });

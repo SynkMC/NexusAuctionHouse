@@ -148,6 +148,9 @@ public class Util {
                 .replace("~", "\\~")
                 .replace("`", "\\`");
     }
+    public static Boolean isSeller(Player p, BINAuction bA) {
+        return p.getUniqueId().equals(bA.getSeller().getUniqueId());
+    }
 
 
 }

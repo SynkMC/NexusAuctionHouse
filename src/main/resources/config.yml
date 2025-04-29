@@ -1,0 +1,4 @@
+log-keep-time: 2592000 # Time (in seconds) after which logs will be deleted (default: 1 month = 2592000 seconds)
+expire-time: 604800 # Time (in seconds) after which an auction will expire if no one has bought the item (default: 1 week = 604800)
+tax-percent: 5 # Percentage of the sell price that players will have to pay in order to put their items in auction
+save-notif: false # Enable if you wish to receive notifications when the plugin saves data to the files

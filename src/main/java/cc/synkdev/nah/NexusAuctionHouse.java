@@ -9,6 +9,7 @@ import cc.synkdev.synkLibs.bukkit.Utils;
 import cc.synkdev.synkLibs.components.SynkPlugin;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageKeys;
+import dev.triumphteam.gui.guis.Gui;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
@@ -18,6 +19,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +30,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, Listener {
     @Getter private static NexusAuctionHouse instance;
@@ -58,9 +63,11 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
         missingDeps.clear();
         if (!Bukkit.getPluginManager().isPluginEnabled("SynkLibs")) {
             missingDeps.add("SynkLibs");
-        } else if (!Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+        }
+        if (!Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             missingDeps.add("Vault");
-        } else if (!setupEconomy()) {
+        }
+        if (!setupEconomy()) {
             missingDeps.add("an economy plugin");
         }
 
@@ -85,7 +92,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
             new Metrics(this, 23102);
 
-            dlConfig();
+            updateConfig();
             loadConfig();
 
             reloadLang();
@@ -108,7 +115,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
             bCM.registerCommand(new AhCommand());
 
-            Bukkit.getPluginManager().registerEvents(new EventHandler(), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
 
             periodicSave.runTaskTimer(this, 6000L, 6000L);
             checkExpiry.runTaskTimer(this, 1200L, 1200L);
@@ -118,7 +125,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
         }
     }
 
-    @org.bukkit.event.EventHandler
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().isOp()) {
             if (!missingDeps.isEmpty()) {
@@ -180,11 +187,39 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
         return econ != null;
     }
 
-    private void dlConfig() {
+    private void updateConfig() {
         if (!this.getDataFolder().exists()) this.getDataFolder().mkdirs();
         try {
-            if (!configFile.exists()) configFile.createNewFile();
-            config = Utils.loadWebConfig("https://synkdev.cc/storage/config-nah.php", configFile);
+            if (!configFile.exists()) {
+                try {
+                    Files.copy(getResource("config.yml"), configFile.toPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                File temp = new File(getDataFolder(), "temp-config-"+System.currentTimeMillis()+".yml");
+                try {
+                    Files.copy(getResource("config.yml"), temp.toPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                FileConfiguration tempConfig = YamlConfiguration.loadConfiguration(temp);
+                FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+                boolean changed = false;
+                for (String key : tempConfig.getKeys(true)) {
+                    if (!config.contains(key)) {
+                        config.set(key, tempConfig.get(key));
+                        changed = true;
+                    }
+                }
+
+                if (changed) {
+                    config.save(configFile);
+                }
+
+                temp.delete();
+            }
+            config = YamlConfiguration.loadConfiguration(configFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -243,7 +278,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "1.5";
+        return "1.5.1";
     }
 
     @Override

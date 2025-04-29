@@ -29,6 +29,7 @@ public class LogsGui {
         if (page > 1) gui.setItem(6, 4, arrowLeft(page));
         if (page < max) gui.setItem(6, 6, arrowRight(page));
         fillGui(gui, page);
+
         return gui;
     }
     GuiItem arrowLeft(int page) {

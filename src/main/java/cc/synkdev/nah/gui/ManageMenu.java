@@ -28,6 +28,7 @@ public class ManageMenu {
         gui.setItem(3, 4, price(bA));
         gui.setItem(3, 5, expiry(bA));
         gui.setItem(3, 6, delete(bA));
+
         return gui;
     }
     GuiItem item(BINAuction bA) {

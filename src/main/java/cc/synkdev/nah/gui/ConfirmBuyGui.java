@@ -1,6 +1,7 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
+import cc.synkdev.nah.api.NAHUtil;
 import cc.synkdev.nah.manager.WebhookManager;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.manager.DataFileManager;
@@ -33,7 +34,7 @@ public class ConfirmBuyGui {
     GuiItem item(BINAuction bA) {
         return ItemBuilder.from(bA.getItem()).asGuiItem();
     }
-    GuiItem confirm(BINAuction bA) {
+    GuiItem confirm(BINAuction bAa) {
         ItemStack item = new ItemStack(Material.GREEN_WOOL);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -41,6 +42,12 @@ public class ConfirmBuyGui {
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();
+            BINAuction bA = NAHUtil.getAuction(bAa.getUuid());
+            if (!bA.getBuyable()) {
+                pl.sendMessage(core.prefix()+Lang.translate("already-bought", core));
+                pl.closeInventory();
+                return;
+            }
             if (!bA.getSeller().getUniqueId().toString().equalsIgnoreCase(pl.getUniqueId().toString())) {
                 if (core.getEcon().has(pl, bA.getPrice())) {
                     core.getEcon().withdrawPlayer(pl, bA.getPrice());
@@ -68,7 +75,8 @@ public class ConfirmBuyGui {
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();
-            new MainGui().gui(pl, 1, null).open(pl);
+            pl.closeInventory();
+            NAHUtil.open(pl, false, null, 1);
         });
     }
 }

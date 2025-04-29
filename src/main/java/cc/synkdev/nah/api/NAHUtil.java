@@ -1,11 +1,20 @@
-package cc.synkdev.nah.manager;
+package cc.synkdev.nah.api;
 
 import cc.synkdev.nah.NexusAuctionHouse;
+import cc.synkdev.nah.api.events.AHToggleEvent;
+import cc.synkdev.nah.api.events.AuctionEditEvent;
+import cc.synkdev.nah.api.events.ItemBanEvent;
+import cc.synkdev.nah.api.events.ItemUnbanEvent;
 import cc.synkdev.nah.gui.LogsGui;
 import cc.synkdev.nah.gui.MainGui;
 import cc.synkdev.nah.gui.RetrieveGui;
+import cc.synkdev.nah.manager.BannedItemsManager;
+import cc.synkdev.nah.manager.DataFileManager;
+import cc.synkdev.nah.manager.ToggleManager;
+import cc.synkdev.nah.manager.WebhookManager;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.synkLibs.bukkit.Lang;
+import dev.triumphteam.gui.guis.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -33,7 +42,12 @@ public class NAHUtil {
      * @param state the state of the Auction House
      */
     public static void toggle(Boolean state) {
-        ToggleManager.set(state);
+        AHToggleEvent event = new AHToggleEvent(state);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+        ToggleManager.set(event.getStatus());
 
         String status = core.getToggle() ? Lang.translate("on", core) : Lang.translate("off", core);
         WebhookManager.sendWebhook("ah-toggle", null, status.substring(2));
@@ -43,11 +57,15 @@ public class NAHUtil {
     /**
      * Open the Auction House GUI for a player
      * @param p the player
+     * @param search The search query (if null, displays all items)
+     * @param page The page (anything below 1 will display the first page)
      * @param force whether to force opening the gui, ignoring permissions or toggle
      */
-    public static void open(Player p, Boolean force) {
+    public static void open(Player p, Boolean force, String search, int page) {
+        if (page < 1) page = 1;
         if (force) {
-            new MainGui().gui(p, 1, null).open(p);
+            Gui gui = new MainGui().gui(p, page, search);
+            gui.open(p);
             return;
         }
 
@@ -55,7 +73,8 @@ public class NAHUtil {
             if (!core.getToggle() && !p.hasPermission("nah.toggle.bypass")) {
                 p.sendMessage(core.prefix()+Lang.translate("error-disabled", core));
             } else {
-                new MainGui().gui(p, 1, null).open(p);
+                Gui gui = new MainGui().gui(p, page, search);
+                gui.open(p);
             }
         }
     }
@@ -86,7 +105,8 @@ public class NAHUtil {
             return;
         }
 
-        new RetrieveGui().gui(p, 1).open(p);
+        Gui gui = new RetrieveGui().gui(p, 1);
+        gui.open(p);
     }
 
     /**
@@ -94,7 +114,8 @@ public class NAHUtil {
      * @param p The player
      */
     public static void openLogs(Player p) {
-        new LogsGui().gui(1).open(p);
+        Gui gui = new LogsGui().gui(1);
+        gui.open(p);
     }
 
     /**
@@ -106,13 +127,27 @@ public class NAHUtil {
     public static void setPrice(BINAuction bA, int price, String executor) {
         if (core.expiredBINs.contains(bA)) {
             core.expiredBINs.remove(bA);
-            bA.setPrice(price);
+            AuctionEditEvent event = new AuctionEditEvent(bA);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
+
+            bA.setPrice(event.getAuction().getPrice());
             core.expiredBINs.add(bA);
         }
 
         if (core.runningBINs.containsKey(bA)) {
             core.runningBINs.remove(bA);
             bA.setPrice(price);
+            AuctionEditEvent event = new AuctionEditEvent(bA);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
+
             core.runningBINs.put(bA, bA.getExpiry());
         }
 
@@ -130,12 +165,24 @@ public class NAHUtil {
         if (core.expiredBINs.contains(bA)) {
             core.expiredBINs.remove(bA);
             bA.setExpiry(expiry);
+            AuctionEditEvent event = new AuctionEditEvent(bA);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
             core.expiredBINs.add(bA);
         }
 
         if (core.runningBINs.containsKey(bA)) {
             core.runningBINs.remove(bA);
             bA.setExpiry(expiry);
+            AuctionEditEvent event = new AuctionEditEvent(bA);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
             core.runningBINs.put(bA, bA.getExpiry());
         }
 
@@ -144,11 +191,21 @@ public class NAHUtil {
     }
 
     public static void ban(Material m) {
-        BannedItemsManager.add(m);
+        ItemBanEvent event = new ItemBanEvent(m);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) return;
+
+        BannedItemsManager.add(event.getItem());
     }
 
     public static void unban(Material m) {
-        BannedItemsManager.remove(m);
+        ItemUnbanEvent event = new ItemUnbanEvent(m);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) return;
+
+        BannedItemsManager.remove(event.getItem());
     }
 
     /**

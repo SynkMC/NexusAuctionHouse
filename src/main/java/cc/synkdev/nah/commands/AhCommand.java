@@ -1,16 +1,14 @@
 package cc.synkdev.nah.commands;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.nah.manager.*;
-import cc.synkdev.nah.objects.BINAuction;
+import cc.synkdev.nah.api.NAHUtil;
 import cc.synkdev.nah.gui.ConfirmSellGui;
-import cc.synkdev.nah.gui.LogsGui;
-import cc.synkdev.nah.gui.MainGui;
-import cc.synkdev.nah.gui.RetrieveGui;
+import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import org.bukkit.Bukkit;
+import dev.triumphteam.gui.guis.Gui;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -22,25 +20,16 @@ public class AhCommand extends BaseCommand {
 
     @Default
     public void onDefault(Player p) {
-        NAHUtil.open(p, false);
+        NAHUtil.open(p, false, null, 1);
     }
 
     @Subcommand("search")
     @Syntax("/ah search [query]")
     public void onSearch (Player p, String[] args) {
         if (args.length == 0) {
-
-        }
-        else if (args.length == 1) new MainGui().gui(p, 1, args[0]).open(p);
-        else {
-            StringBuilder sb = new StringBuilder();
-            int index = 0;
-            for (int i = 0; i < args.length-1; i++) {
-                index = i;
-                sb.append(args[i]).append(" ");
-            }
-            sb.append(args[index+1]);
-            new MainGui().gui(p, 1, sb.toString()).open(p);
+            NAHUtil.open(p, false, null, 1);
+        } else {
+            NAHUtil.open(p, false, StringUtils.join(args), 1);
         }
     }
 
@@ -84,7 +73,8 @@ public class AhCommand extends BaseCommand {
                 return;
             }
 
-            new ConfirmSellGui().gui(p, price).open(p);
+            Gui gui = new ConfirmSellGui().gui(p, price);
+            gui.open(p);
         }
     }
 
