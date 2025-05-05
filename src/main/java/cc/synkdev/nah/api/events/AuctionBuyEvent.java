@@ -1,8 +1,6 @@
 package cc.synkdev.nah.api.events;
 
 import cc.synkdev.nah.objects.BINAuction;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -18,6 +16,7 @@ public class AuctionBuyEvent extends Event implements Cancellable {
     public AuctionBuyEvent(Player buyer, BINAuction auction, OfflinePlayer seller) {
         this.buyer = buyer;
         this.auction = auction;
+        this.cancel = false;
         this.seller = seller;
     }
 

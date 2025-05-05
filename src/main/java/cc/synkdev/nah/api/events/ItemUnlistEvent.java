@@ -17,6 +17,7 @@ public class ItemUnlistEvent extends Event implements Cancellable {
     public ItemUnlistEvent (Player player, BINAuction auction) {
         this.player = player;
         this.auction = auction;
+        this.cancel = false;
     }
 
     public Player getPlayer() {

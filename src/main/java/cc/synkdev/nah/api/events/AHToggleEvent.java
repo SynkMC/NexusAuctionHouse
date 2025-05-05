@@ -10,6 +10,7 @@ public class AHToggleEvent extends Event implements Cancellable {
     private Boolean cancel;
     public AHToggleEvent(Boolean status) {
         this.status = status;
+        this.cancel = false;
     }
 
     public void setStatus(Boolean status) {

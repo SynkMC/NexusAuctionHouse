@@ -11,6 +11,7 @@ public class AuctionEditEvent extends Event implements Cancellable {
     private Boolean cancel;
     public AuctionEditEvent(BINAuction auction) {
         this.auction = auction;
+        this.cancel = false;
     }
 
     public void setAuction(BINAuction auction) {

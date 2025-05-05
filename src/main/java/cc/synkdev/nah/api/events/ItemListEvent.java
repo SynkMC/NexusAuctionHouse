@@ -1,6 +1,5 @@
 package cc.synkdev.nah.api.events;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -24,6 +23,7 @@ public class ItemListEvent extends Event implements Cancellable {
         this.item = item;
         this.price = price;
         this.expiry = expiry;
+        this.cancel = false;
     }
 
     public void setPlayer(Player player) {

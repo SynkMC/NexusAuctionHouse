@@ -1,11 +1,8 @@
 package cc.synkdev.nah.api.events;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Delegate;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -16,6 +13,7 @@ public class ItemUnbanEvent extends Event implements Cancellable {
     private Material item;
     private Boolean cancellable;
     public ItemUnbanEvent(Material item) {
+        this.cancellable = false;
         this.item = item;
     }
 

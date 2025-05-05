@@ -1,15 +1,13 @@
 package cc.synkdev.nah;
 
 import cc.synkdev.nah.commands.AhCommand;
+import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.objects.SortingTypes;
-import cc.synkdev.nah.manager.*;
 import cc.synkdev.synkLibs.bukkit.Lang;
-import cc.synkdev.synkLibs.bukkit.Utils;
 import cc.synkdev.synkLibs.components.SynkPlugin;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageKeys;
-import dev.triumphteam.gui.guis.Gui;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
@@ -32,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, Listener {
     @Getter private static NexusAuctionHouse instance;
@@ -278,7 +275,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "1.5.1";
+        return "1.5.2";
     }
 
     @Override
