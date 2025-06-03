@@ -7,10 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
-    NexusAuctionHouse core = NexusAuctionHouse.getInstance();
+    private final NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     @EventHandler
     public void onJoin (PlayerJoinEvent event) {
         Player p = event.getPlayer();

@@ -2,9 +2,73 @@ name: NexusAuctionHouse
 version: '${project.version}'
 main: cc.synkdev.nah.NexusAuctionHouse
 api-version: '1.13'
-authors: [ Synk ]
+authors: [ "Synk" ]
 description: The easy auction house plugin you've looked for, and for free!
 website: https://synkdev.cc
+permissions:
+  nah.command.reload:
+    description: "Reloads the plugin configuration"
+    default: op
+  nah.command.logs:
+    description: "View the plugin logs"
+    default: op
+  nah.command.expired:
+    description: "View expired auctions"
+    default: true
+  nah.command.sell:
+    description: "Sell an item on the auction house"
+    default: true
+  nah.command.search:
+    description: "Search for an item on the auction house"
+    default: true
+  nah.manage.changeprice:
+    description: "Change the price of an auction"
+    default: op
+  nah.manage.changeexpiry:
+    description: "Change the expiry date of an auction"
+    default: op
+  nah.command.ban:
+    description: "Ban an item from the auction house"
+    default: op
+  nah.command.unban:
+    description: "Unban an item from the auction house"
+    default: op
+  nah.command.toggle:
+    description: "Toggle the auction house"
+    default: op
+  nah.gui.open:
+    description: "Open the auction house GUI"
+    default: true
+  nah.toggle.bypass:
+    description: "Bypass the toggle"
+    default: op
+  nah.manage.delete:
+    description: "Delete an auction"
+    default: op
+  nah.menu.manage:
+    description: "Open the management menu"
+    default: op
+  nah.command.sorts:
+    description: "Open the sorts management menu"
+    default: op
+  nah.sorts.create:
+    description: "Create a new item sort"
+    default: op
+  nah.sorts.delete:
+    description: "Delete an item sort"
+    default: op
+  nah.sorts.rename:
+    description: "Rename an item sort"
+    default: op
+  nah.sorts.icon:
+    description: "Change an item sort's icon"
+    default: op
+  nah.sorts.contents:
+    description: "Change an item sort's contents"
+    default: op
+  nah.manage.give:
+    description: "Give yourself a listing's item"
+    default: op
 softdepend:
   - SynkLibs
   - Vault

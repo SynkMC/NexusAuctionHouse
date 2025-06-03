@@ -1,21 +1,17 @@
 package cc.synkdev.nah.objects;
 //Source of this: https://gist.github.com/k3kdude/fba6f6b37594eae3d6f9475330733bdb
 
-import cc.synkdev.nah.manager.Util;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class DiscordWebhook {
 
@@ -38,7 +34,9 @@ public class DiscordWebhook {
 
 
     String escapeJson(String text) {
-        if (text == null) return "";
+        if (text == null) {
+            return "";
+        }
         return text
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
@@ -289,7 +287,7 @@ public class DiscordWebhook {
 
     private class JSONObject {
 
-        private final HashMap<String, Object> map = new HashMap<>();
+        private final Map<String, Object> map = new HashMap<>();
 
         void put(String key, Object value) {
             if (value != null) {

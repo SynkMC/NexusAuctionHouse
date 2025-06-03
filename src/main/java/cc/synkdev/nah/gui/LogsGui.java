@@ -1,9 +1,9 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
+import cc.synkdev.nah.manager.Util;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.synkLibs.bukkit.Lang;
-import cc.synkdev.nah.manager.Util;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -26,6 +26,7 @@ public class LogsGui {
                 .title(Component.text(ChatColor.YELLOW+ Lang.translate("logTitle", core)))
                 .rows(6)
                 .create();
+        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
         if (page > 1) gui.setItem(6, 4, arrowLeft(page));
         if (page < max) gui.setItem(6, 6, arrowRight(page));
         fillGui(gui, page);
@@ -63,9 +64,12 @@ public class LogsGui {
         ItemStack copy = bA.getItem().clone();
         List<Component> lore = new ArrayList<>();
         lore.addAll(Util.loreToComps(bA.getItem()));
-        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+"---------------"), Component.text(""), Component.text(ChatColor.YELLOW+Lang.translate("giveLog", core))));
-        if (bA.getBuyer() == null) lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+ Lang.translate("expiredWord", core))));
-        else lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+ Lang.translate("soldTo", core, bA.getBuyer().getName(), bA.getSeller().getName()))));
+        if (bA.getBuyer() == null) {
+            lore.addAll(Arrays.asList(Component.text(""), Component.text("  "+ChatColor.YELLOW+ Lang.translate("expiredWord", core))));
+        } else {
+            lore.addAll(Arrays.asList(Component.text(""), Component.text("  "+ChatColor.YELLOW+ Lang.translate("soldTo", core, Util.getName(bA.getBuyer()), Util.getName(bA.getSeller())))));
+        }
+        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.GOLD+Lang.translate("giveLog", core))));
         return ItemBuilder.from(copy)
                 .lore(lore)
                 .asGuiItem(event -> {

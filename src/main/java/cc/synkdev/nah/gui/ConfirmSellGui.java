@@ -21,7 +21,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.UUID;
 
 public class ConfirmSellGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
@@ -31,6 +30,7 @@ public class ConfirmSellGui {
                 .rows(4)
                 .disableAllInteractions()
                 .create();
+        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
         gui.setItem(2, 5, item(p));
         gui.setItem(3, 3, confirm(price));
         gui.setItem(3, 7, cancel());
@@ -41,33 +41,41 @@ public class ConfirmSellGui {
         return ItemBuilder.from(p.getInventory().getItemInMainHand()).asGuiItem();
     }
     GuiItem confirm(int price) {
-        int tax = Math.toIntExact(Math.round(price*((double) core.getTaxPercent() /100)));
+        int tax = Math.toIntExact(Math.round(price*((double) core.getSellTaxPercent() /100)));
         ItemStack item = new ItemStack(Material.GREEN_WOOL);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("taxes", core, core.getTaxPercent()+"", tax+"")))));
+        if (core.getSellTaxPercent() > 0) meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("taxes", core, core.getSellTaxPercent()+"", tax+"")))));
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("confirm", core)));
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();
             ItemStack itemStack = pl.getInventory().getItemInMainHand();
-            if (core.getEcon().has(pl, tax)) {
-                core.getEcon().withdrawPlayer(pl, tax);
-                int expire = Math.toIntExact(System.currentTimeMillis() / 1000) + core.getExpireTime();
+            if (itemStack == null) {
+                pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("emptyHand", core));
+                return;
+            }
+            if (!core.getEcon().has(pl, tax)) {
+                pl.sendMessage(core.prefix() + ChatColor.RED + Lang.translate("notEnoughTaxes", core));
+                return;
+            }
+            core.getEcon().withdrawPlayer(pl, tax);
+            long expire = (System.currentTimeMillis() / 1000) + core.getExpireTime();
 
-                ItemListEvent listEvent = new ItemListEvent(pl, itemStack, price, new Date(expire * 1000L));
-                Bukkit.getPluginManager().callEvent(listEvent);
+            ItemListEvent listEvent = new ItemListEvent(pl, itemStack, price, new Date(expire * 1000L));
+            Bukkit.getPluginManager().callEvent(listEvent);
 
-                if (listEvent.isCancelled()) return;
+            if (listEvent.isCancelled()) return;
 
-                BINAuction bA = new BINAuction(UUID.randomUUID(), listEvent.getPlayer(), listEvent.getItem(), listEvent.getPrice(), expire);
-                pl.getInventory().setItemInMainHand(null);
-                core.runningBINs.put(bA, expire);
-                DataFileManager.sort();
-                pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successSell", core, price + ""));
-                pl.closeInventory();
-                WebhookManager.sendWebhook("new-listing", bA, listEvent.getPlayer().getName(), listEvent.getPrice()+"");
-            } else pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughTaxes", core));
+            BINAuction bA = new BINAuction(core.getId(), listEvent.getPlayer().getUniqueId(), listEvent.getItem(), listEvent.getPrice(), expire);
+            core.setId(core.getId() + 1);
+            pl.getInventory().setItemInMainHand(null);
+            core.runningBINs.add(bA);
+            DataFileManager.sort();
+            pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successSell", core, price + ""));
+            pl.closeInventory();
+            WebhookManager.sendWebhook("new-listing", bA, listEvent.getPlayer().getName(), listEvent.getPrice() + "");
+
             pl.closeInventory();
         });
     }

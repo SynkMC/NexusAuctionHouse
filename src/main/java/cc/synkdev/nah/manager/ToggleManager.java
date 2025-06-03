@@ -5,7 +5,7 @@ import cc.synkdev.nah.NexusAuctionHouse;
 import java.io.*;
 
 public class ToggleManager {
-    private final static NexusAuctionHouse core = NexusAuctionHouse.getInstance();
+    private static final NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     private static File file = new File(new File(core.getDataFolder(), "data"), "toggle.yml");
     public static void set(Boolean bool) {
         core.setToggle(bool);
@@ -28,6 +28,7 @@ public class ToggleManager {
                 while ((ln = reader.readLine()) != null) {
                     core.setToggle(Boolean.valueOf(ln));
                 }
+                reader.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

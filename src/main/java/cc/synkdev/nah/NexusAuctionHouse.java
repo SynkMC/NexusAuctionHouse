@@ -3,7 +3,9 @@ package cc.synkdev.nah;
 import cc.synkdev.nah.commands.AhCommand;
 import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
+import cc.synkdev.nah.objects.ItemSort;
 import cc.synkdev.nah.objects.SortingTypes;
+import cc.synkdev.synkLibs.bukkit.Analytics;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import cc.synkdev.synkLibs.components.SynkPlugin;
 import co.aikar.commands.BukkitCommandManager;
@@ -15,7 +17,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
@@ -36,24 +37,28 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
     File configFile = new File(this.getDataFolder(), "config.yml");
     File langFile = new File(this.getDataFolder(), "lang.json");
     FileConfiguration config;
-    @Getter private int keepLogTime;
-    @Getter private int expireTime;
-    @Getter private int taxPercent;
+    @Getter private long keepLogTime;
+    @Getter private long expireTime;
+    @Getter private int buyTaxPercent;
+    @Getter private int sellTaxPercent;
     public FileConfiguration lang;
     public List<BINAuction> expiredBINs = new ArrayList<>();
-    public Map<BINAuction, Integer> runningBINs = new HashMap<>();
+    public List<BINAuction> runningBINs = new ArrayList<>();
     public List<BINAuction> sortPrice = new ArrayList<>();
     public List<BINAuction> sortPriceMax = new ArrayList<>();
     public List<BINAuction> sortExpiry = new ArrayList<>();
     public List<BINAuction> sortExpiryMax = new ArrayList<>();
-    public Map<OfflinePlayer, SortingTypes> playerSortingTypes = new HashMap<>();
-    public Map<OfflinePlayer, List<ItemStack>> retrieveMap = new HashMap<>();
+    public Map<String, ItemSort> itemSorts = new HashMap<>();
+    public Map<UUID, SortingTypes> playerSortingTypes = new HashMap<>();
+    public Map<UUID, List<ItemStack>> retrieveMap = new HashMap<>();
     public List<SortingTypes> sortingTypes;
     @Getter private Economy econ = null;
     public Map<String, String> langMap = new HashMap<>();
     public List<Material> banned = new ArrayList<>();
     public List<String> missingDeps = new ArrayList<>();
     @Getter @Setter private Boolean toggle = true;
+    @Getter @Setter private int id = 0;
+    @Getter private String dateFormat;
 
     @Override
     public void onEnable() {
@@ -88,9 +93,11 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
             instance = this;
 
             new Metrics(this, 23102);
+            Analytics.registerSpl(this);
 
             updateConfig();
             loadConfig();
+            loadSorts();
 
             reloadLang();
 
@@ -101,6 +108,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
             BannedItemsManager.read();
             ToggleManager.read();
             WebhookManager.read();
+            ItemSortsManager.read();
 
             sortingTypes = new ArrayList<>(Arrays.asList(SortingTypes.PRICEMIN, SortingTypes.PRICEMAX, SortingTypes.LATESTPOSTED, SortingTypes.EXPIRESSOON));
 
@@ -122,44 +130,57 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
         }
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        if (event.getPlayer().isOp()) {
-            if (!missingDeps.isEmpty()) {
-                int index = 0;
-                String s;
-                if (missingDeps.size() == 1) {
-                    s = missingDeps.get(0);
-                } else {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < missingDeps.size()-1; i++) {
-                        sb.append(missingDeps.get(i)).append(", ");
-                        index++;
-                    }
-                    sb.append(missingDeps.get(index+1));
-                    s = sb.toString();
-                }
-                event.getPlayer().sendMessage(ChatColor.RED+"[NexusAuctionHouse] You are missing plugin dependancies! Please download the following: "+s);
-            }
+    private void loadSorts() {
+        File file = new File(new File(getDataFolder(), "data"), "sorts.json");
+        if (file.exists()) return;
+        try {
+            Files.copy(getResource("sorts.json"), file.toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private final BukkitRunnable checkExpiry = new BukkitRunnable() {
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        if (event.getPlayer().isOp()) {
+            if (missingDeps.isEmpty()) return;
+
+            int index = 0;
+            String s;
+            if (missingDeps.size() == 1) {
+                s = missingDeps.get(0);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < missingDeps.size() - 1; i++) {
+                    sb.append(missingDeps.get(i)).append(", ");
+                    index++;
+                }
+                sb.append(missingDeps.get(index + 1));
+                s = sb.toString();
+            }
+            event.getPlayer().sendMessage(ChatColor.RED + "[NexusAuctionHouse] You are missing plugin dependancies! Please download the following: " + s);
+
+        }
+    }
+
+    public final BukkitRunnable checkExpiry = new BukkitRunnable() {
         @Override
         public void run() {
+            if (!getConfig().getBoolean("expiry.enable")) return;
+
             List<BINAuction> list = new ArrayList<>();
-            runningBINs.forEach((binAuction, integer) -> {
+            for (BINAuction binAuction : runningBINs) {
                 int time = Math.toIntExact(System.currentTimeMillis()/1000);
-                if (time>=integer) {
-                    if (binAuction.getSeller().isOnline()) binAuction.getSeller().getPlayer().sendMessage(prefix()+ChatColor.GOLD+Lang.translate("expired", getInstance()));
+                if (time>=binAuction.getExpiry()) {
+                    if (Util.isOnline(binAuction.getSeller())) Bukkit.getPlayer(binAuction.getSeller()).sendMessage(prefix()+ChatColor.GOLD+Lang.translate("expired", getInstance()));
                     binAuction.setBuyable(false);
                     list.add(binAuction);
                 }
-            });
+            }
             for (BINAuction bA : list) {
                 runningBINs.remove(bA);
                 expiredBINs.add(bA);
-                WebhookManager.sendWebhook("listing-expired", null, bA.getSeller().getName());
+                WebhookManager.sendWebhook("listing-expired", null, Util.getName(bA.getSeller()));
                 if (retrieveMap.containsKey(bA.getSeller())) {
                     List<ItemStack> users = new ArrayList<>(retrieveMap.get(bA.getSeller()));
                     users.add(bA.getItem());
@@ -223,9 +244,11 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
     }
     public void loadConfig() {
         reloadConfig();
-        keepLogTime = getConfig().getInt("log-keep-time");
-        expireTime = getConfig().getInt("expire-time");
-        taxPercent = getConfig().getInt("tax-percent");
+        keepLogTime = Util.parseDurationToSeconds(getConfig().getString("log-keep-time"));
+        expireTime = getConfig().getBoolean("expiry.enable") ?  Util.parseDurationToSeconds(getConfig().getString("expiry.time")) : 0;
+        buyTaxPercent = getConfig().getInt("tax.buy-tax");
+        sellTaxPercent = getConfig().getInt("tax.sell-tax");
+        dateFormat = getConfig().getString("date-format");
     }
 
     public void reloadLang() {
@@ -237,6 +260,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
         long time = System.currentTimeMillis();
         DataFileManager.save();
         DataFileManager.sort();
+        ItemSortsManager.save();
 
         time = System.currentTimeMillis()-time;
         if (config.getBoolean("save-notif")) Util.staffBc(prefix()+ChatColor.GOLD+Lang.translate("dataSave", this, time+""));
@@ -254,7 +278,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
             int time = Math.toIntExact(System.currentTimeMillis()/1000);
             List<BINAuction> list = new ArrayList<>();
             for (BINAuction bA : expiredBINs) {
-                int bATime = bA.getExpiry() + keepLogTime;
+                long bATime = bA.getExpiry() + keepLogTime;
 
                 if (time >= bATime) list.add(bA);
             }
@@ -275,7 +299,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "1.5.2";
+        return "2.0";
     }
 
     @Override

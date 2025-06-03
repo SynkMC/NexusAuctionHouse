@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import java.io.*;
 
 public class BannedItemsManager {
-    private final static NexusAuctionHouse core = NexusAuctionHouse.getInstance();
+    private static final NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     private static File file = new File(new File(core.getDataFolder(), "data"), "banned.yml");
     public static void add(Material m) {
         if (!core.banned.contains(m)) core.banned.add(m);

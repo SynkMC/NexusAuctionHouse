@@ -2,8 +2,8 @@ package cc.synkdev.nah.manager;
 
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.objects.BINAuction;
-import cc.synkdev.synkLibs.bukkit.Utils;
 import cc.synkdev.nah.objects.DiscordWebhook;
+import cc.synkdev.synkLibs.bukkit.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WebhookManager {
-    private final static NexusAuctionHouse core = NexusAuctionHouse.getInstance();
+    private static final NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     private static File file = new File(core.getDataFolder(), "webhook.yml");
     private static Boolean status = false;
     private static String url = null;

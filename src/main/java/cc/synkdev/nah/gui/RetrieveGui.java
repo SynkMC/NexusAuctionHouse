@@ -1,8 +1,8 @@
 package cc.synkdev.nah.gui;
 
 import cc.synkdev.nah.NexusAuctionHouse;
-import cc.synkdev.synkLibs.bukkit.Lang;
 import cc.synkdev.nah.manager.Util;
+import cc.synkdev.synkLibs.bukkit.Lang;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -20,12 +20,13 @@ public class RetrieveGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     int max = 0;
     public Gui gui(Player p, int page) {
-        max = (core.retrieveMap.getOrDefault(p, new ArrayList<>()).size()/10)+1;
+        max = (core.retrieveMap.getOrDefault(p.getUniqueId(), new ArrayList<>()).size()/10)+1;
         Gui gui = Gui.gui()
                 .disableAllInteractions()
                 .title(Component.text(ChatColor.YELLOW+ Lang.translate("titleRetrieve", core)))
                 .rows(6)
                 .create();
+        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
         if (page > 1) gui.setItem(6, 4, arrowLeft(page));
         if (page < max) gui.setItem(6, 6, arrowRight(page));
         fillGui(gui, p, page);
@@ -52,7 +53,7 @@ public class RetrieveGui {
         int min = 45*(page-1);
         int max = 45*page;
 
-        List<ItemStack> list = new ArrayList<>(core.retrieveMap.getOrDefault(p, new ArrayList<>()));
+        List<ItemStack> list = new ArrayList<>(core.retrieveMap.getOrDefault(p.getUniqueId(), new ArrayList<>()));
         for (int i = min; i < max; i++) {
             if (list.size() > i) gui.setItem(i-min, item(list.get(i), page));
         }
@@ -60,21 +61,21 @@ public class RetrieveGui {
     GuiItem item(ItemStack item, int page) {
         List<Component> lore = new ArrayList<>();
         lore.addAll(Util.loreToComps(item));
-        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.YELLOW+"---------------"), Component.text(""), Component.text(ChatColor.YELLOW+Lang.translate("clickRetrieve", core))));
+        lore.addAll(Arrays.asList(Component.text(""), Component.text(Lang.translate("clickRetrieve", core))));
         return ItemBuilder.from(item.clone())
                 .lore(lore)
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
-                    List<ItemStack> list = core.retrieveMap.getOrDefault(p, new ArrayList<>());
+                    List<ItemStack> list = core.retrieveMap.getOrDefault(p.getUniqueId(), new ArrayList<>());
                     if (!list.isEmpty() && list.contains(item)) {
                         p.getInventory().addItem(item);
                         list.remove(item);
                         if (!list.isEmpty()) {
-                            core.retrieveMap.replace(p, list);
+                            core.retrieveMap.replace(p.getUniqueId(), list);
                             gui(p, page).open(p);
                         }
                         else {
-                            core.retrieveMap.remove(p);
+                            core.retrieveMap.remove(p.getUniqueId());
                             p.closeInventory();
                         }
                     }
