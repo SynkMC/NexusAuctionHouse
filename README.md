@@ -3,7 +3,7 @@ A simple and optimized Auction House plugin
 
 ## Requirements 
 - Java 8+
-- A Minecraft server above 1.7
+- A Minecraft server above 1.13
 - [Vault](https://www.spigotmc.org/resources/vault.34315/)
 - [SynkLibs](https://modrinth.com/plugin/synklibs)
 
@@ -14,17 +14,23 @@ A simple and optimized Auction House plugin
 - /ah sell <price> - list an item on the Auction House 
 - /ah logs - opens the list of sold items - nah.menu.logs
 - /ah toggle - toggles the AH on or off - nah.command.reload
+- /ah (unban)ban - bans or unbans the item in your hand from the Auction House - nah.command.ban, nah.command.unban
+- /ah expired - opens the list of expired items - nah.command.expired
+- /ah sorts - opens the item sorting menu - nah.command.sorts
 
 ## Features
 - Searching
 - Sorting
 - Admin control
-- Listing fee
+- Listing/buying fee
 - Expiry
 - Logging for admins
 - Item banning
 - Webhook notifications
 - Slots cap customization
+- Configurable date format
+- Customizable item sorts
+- AnvilGUI input
 
 ## Developer API
 The plugin now features a developer API.
