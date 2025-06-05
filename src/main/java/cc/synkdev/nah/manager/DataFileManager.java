@@ -2,6 +2,7 @@ package cc.synkdev.nah.manager;
 
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.objects.BINAuction;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +43,7 @@ public class DataFileManager {
             while ((line = reader.readLine()) != null) {
                 String[] split = line.split(";");
                 Boolean buyable = split[6].equals("true");
-                BINAuction bA = new BINAuction(core.getId(), split[1], split[2], Integer.parseInt(split[3]), Integer.parseInt(split[4]), split[5], buyable);
+                BINAuction bA = new BINAuction(core.getId(), split[1], split[2], Long.parseLong(split[3]), Long.parseLong(split[4]), split[5], buyable);
                 core.setId(core.getId() + 1);
                 if (buyable) {
                     running.add(bA);
@@ -119,11 +120,13 @@ public class DataFileManager {
                     if (id > core.getId()) core.setId(id + 1);
                     String seller = obj.getString("seller");
                     String item = obj.getString("item");
-                    int price = obj.getInt("price");
+                    long price = obj.getLong("price");
                     long expiry = obj.getLong("expiry");
                     String buyer = obj.getString("buyer");
                     boolean buyable = obj.getBoolean("buyable");
                     BINAuction bA = new BINAuction(id, seller, item, price, expiry, buyer, buyable);
+                    if (bA.getItem().getType() == Material.AIR) continue;
+
                     if (buyable) {
                         running.add(bA);
                     } else {

@@ -97,13 +97,13 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
             updateConfig();
             loadConfig();
-            loadSorts();
 
             reloadLang();
 
             DataFileManager.init();
             DataFileManager.load();
             DataFileManager.sort();
+            loadSorts();
 
             BannedItemsManager.read();
             ToggleManager.read();
@@ -299,7 +299,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "2.0";
+        return "2.0.1";
     }
 
     @Override

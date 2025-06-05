@@ -49,7 +49,7 @@ The JavaDocs can be found [here](https://synkdev.cc/storage/javadocs/nah)
 	<dependency>
 	    <groupId>com.github.SynkMC</groupId>
 	    <artifactId>NexusAuctionHouse</artifactId>
-	    <version>2.0</version>
+	    <version>2.0.1</version>
 	    <scope>provided</scope>
 	</dependency>
 ```
@@ -64,6 +64,6 @@ dependencyResolutionManagement {
 	}
 
 dependencies {
-	        implementation 'com.github.SynkMC:NexusAuctionHouse:2.0'
+	        implementation 'com.github.SynkMC:NexusAuctionHouse:2.0.1'
 	}
 ```

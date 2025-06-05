@@ -3,7 +3,6 @@ package cc.synkdev.nah.gui;
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.synkLibs.bukkit.Lang;
-import cc.synkdev.synkLibs.bukkit.Utils;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
@@ -17,7 +16,6 @@ public class ShulkerViewerGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     public Gui gui(BINAuction bA) {
         ItemStack item = bA.getItem();
-        Utils.log("Type: "+item.getType().name());
         if (!item.getType().name().contains("SHULKER_BOX")) return null;
         Gui gui = Gui.gui().rows(4).title(Component.text(Lang.translate("shulkerViewer", core))).disableAllInteractions().create();
         if (item.getItemMeta() instanceof BlockStateMeta) {

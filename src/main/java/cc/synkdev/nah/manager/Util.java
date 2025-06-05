@@ -124,10 +124,10 @@ public class Util {
         }
         switch (sort) {
             case PRICEMIN:
-                list.sort(Comparator.comparingInt(BINAuction::getPrice));
+                list.sort(Comparator.comparingLong(BINAuction::getPrice));
                 break;
             case PRICEMAX:
-                list.sort(Comparator.comparingInt(BINAuction::getPrice));
+                list.sort(Comparator.comparingLong(BINAuction::getPrice));
                 reverseList(list);
                 break;
             case EXPIRESSOON:

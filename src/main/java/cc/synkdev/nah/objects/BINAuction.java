@@ -14,11 +14,11 @@ public class BINAuction {
     private int id;
     private UUID seller;
     private ItemStack item;
-    private int price;
+    private long price;
     private long expiry;
     private UUID buyer = null;
     private Boolean buyable;
-    public BINAuction(int id, String seller, String item, int price, long expiry, @Nullable String buyer, Boolean buyable) {
+    public BINAuction(int id, String seller, String item, long price, long expiry, @Nullable String buyer, Boolean buyable) {
         this.id = id;
         this.seller = UUID.fromString(seller);
         this.item = Util.deserializeItemstack(item);
@@ -30,7 +30,7 @@ public class BINAuction {
 
         this.buyable = buyable;
     }
-    public BINAuction(int id, UUID seller, ItemStack item, int price, long expiry) {
+    public BINAuction(int id, UUID seller, ItemStack item, long price, long expiry) {
         this.id = id;
         this.seller = seller;
         this.item = item;

@@ -58,35 +58,40 @@ public class AhCommand extends BaseCommand {
     public void onSell(Player p, String[] args) {
         Analytics.addCommandUse(core, "ah sell");
         if (args.length == 0) {
-            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("sellUsage", core));
+            p.sendMessage(core.prefix() + ChatColor.RED + Lang.translate("sellUsage", core));
+            return;
         }
-        else if (args.length == 1) {
-            if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR || p.getInventory().getItemInMainHand().getAmount() == 0) {
-                p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("emptyHand", core));
-                return;
-            }
-
-            if (core.banned.contains(p.getInventory().getItemInMainHand().getType())) {
-                p.sendMessage(core.prefix()+Lang.translate("sellBanned", core));
-                return;
-            }
-
-            if (NAHUtil.getSlotsLimit(p) != -1 && (NAHUtil.getUsedSlots(p)+1) >= NAHUtil.getSlotsLimit(p)) {
-                p.sendMessage(Lang.translate("slots-cap", core, NAHUtil.getSlotsLimit(p)+""));
-                return;
-            }
-
-            int price;
-            try {
-                price = Integer.parseInt(args[0]);
-            } catch (NumberFormatException e) {
-                p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("invalidNumber", core));
-                return;
-            }
-
-            Gui gui = new ConfirmSellGui().gui(p, price);
-            gui.open(p);
+        if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR || p.getInventory().getItemInMainHand().getAmount() == 0) {
+            p.sendMessage(core.prefix() + ChatColor.RED + Lang.translate("emptyHand", core));
+            return;
         }
+
+        if (core.banned.contains(p.getInventory().getItemInMainHand().getType())) {
+            p.sendMessage(core.prefix() + Lang.translate("sellBanned", core));
+            return;
+        }
+
+        if (NAHUtil.getSlotsLimit(p) != -1 && (NAHUtil.getUsedSlots(p) + 1) >= NAHUtil.getSlotsLimit(p)) {
+            p.sendMessage(Lang.translate("slots-cap", core, NAHUtil.getSlotsLimit(p) + ""));
+            return;
+        }
+
+        long price;
+        try {
+            price = Long.parseLong(args[0]);
+        } catch (NumberFormatException e) {
+            p.sendMessage(core.prefix() + ChatColor.RED + Lang.translate("invalidNumber", core));
+            return;
+        }
+
+        if (price <= 0) {
+            p.sendMessage(core.prefix() + ChatColor.RED + Lang.translate("invalidNumber", core));
+            return;
+        }
+
+        Gui gui = new ConfirmSellGui().gui(p, price);
+        gui.open(p);
+
     }
 
     @Subcommand("logs")

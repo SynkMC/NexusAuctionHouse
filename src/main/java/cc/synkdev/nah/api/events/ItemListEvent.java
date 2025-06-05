@@ -15,10 +15,10 @@ public class ItemListEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private Player player;
     private ItemStack item;
-    private int price;
+    private long price;
     private Date expiry;
     private Boolean cancel;
-    public ItemListEvent(Player player, ItemStack item, int price, Date expiry) {
+    public ItemListEvent(Player player, ItemStack item, long price, Date expiry) {
         this.player = player;
         this.item = item;
         this.price = price;
@@ -42,11 +42,11 @@ public class ItemListEvent extends Event implements Cancellable {
         return item;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
-    public int getPrice() {
+    public long getPrice() {
         return price;
     }
 

@@ -124,7 +124,7 @@ public class NAHUtil {
      * @param price The new price
      * @param executor The person who sets the price (can be anything)
      */
-    public static void setPrice(BINAuction bA, int price, String executor) {
+    public static void setPrice(BINAuction bA, long price, String executor) {
         if (core.expiredBINs.contains(bA)) {
             core.expiredBINs.remove(bA);
             AuctionEditEvent event = new AuctionEditEvent(bA);

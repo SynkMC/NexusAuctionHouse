@@ -163,7 +163,7 @@ public class MainGui {
         if (!shulker) {
             lore.addAll(Util.loreToComps(bA.getItem()));
         }
-        lore.addAll(Arrays.asList(Component.text(""), Component.text("  "+Lang.translate("price", core, Integer.toString(bA.getPrice()))), Component.text("  "+Lang.translate("seller", core, Util.getName(bA.getSeller()))), Component.text("  "+Lang.translate("expiry", core, Util.convertSecondsToTime(bA.getExpiry()))), Component.text(""), Component.text(Lang.translate("buyNow", core))));
+        lore.addAll(Arrays.asList(Component.text(""), Component.text("  "+Lang.translate("price", core, Long.toString(bA.getPrice()))), Component.text("  "+Lang.translate("seller", core, Util.getName(bA.getSeller()))), Component.text("  "+Lang.translate("expiry", core, Util.convertSecondsToTime(bA.getExpiry()))), Component.text(""), Component.text(Lang.translate("buyNow", core))));
         if (shulker) {
             lore.add(Component.text(Lang.translate("shulkerMenu", core)));
         }

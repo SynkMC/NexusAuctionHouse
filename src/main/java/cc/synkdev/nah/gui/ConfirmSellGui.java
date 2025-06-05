@@ -3,6 +3,7 @@ package cc.synkdev.nah.gui;
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.api.events.ItemListEvent;
 import cc.synkdev.nah.manager.DataFileManager;
+import cc.synkdev.nah.manager.Util;
 import cc.synkdev.nah.manager.WebhookManager;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.synkLibs.bukkit.Lang;
@@ -24,7 +25,7 @@ import java.util.Date;
 
 public class ConfirmSellGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
-    public Gui gui(Player p, int price) {
+    public Gui gui(Player p, long price) {
         Gui gui = Gui.gui()
                 .title(Component.text(ChatColor.YELLOW+ Lang.translate("confirmSell", core)))
                 .rows(4)
@@ -40,8 +41,8 @@ public class ConfirmSellGui {
     GuiItem item(Player p) {
         return ItemBuilder.from(p.getInventory().getItemInMainHand()).asGuiItem();
     }
-    GuiItem confirm(int price) {
-        int tax = Math.toIntExact(Math.round(price*((double) core.getSellTaxPercent() /100)));
+    GuiItem confirm(long price) {
+        long tax = Math.round(price*((double) core.getSellTaxPercent() /100));
         ItemStack item = new ItemStack(Material.GREEN_WOOL);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -51,8 +52,16 @@ public class ConfirmSellGui {
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();
             ItemStack itemStack = pl.getInventory().getItemInMainHand();
-            if (itemStack == null) {
+            if (itemStack == null || itemStack.getType() == Material.AIR) {
                 pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("emptyHand", core));
+                return;
+            }
+            if (Util.serializeItemstack(itemStack).length()>20000) {
+                pl.sendMessage(core.prefix()+Lang.translate("tooBig", core));
+                return;
+            }
+            if (core.banned.contains(itemStack.getType())) {
+                pl.sendMessage(core.prefix() + Lang.translate("sellBanned", core));
                 return;
             }
             if (!core.getEcon().has(pl, tax)) {
