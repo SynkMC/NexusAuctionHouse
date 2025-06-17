@@ -10,8 +10,10 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.triumphteam.gui.guis.Gui;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -45,7 +47,7 @@ public class AhCommand extends BaseCommand {
         sender.sendMessage(core.prefix()+ChatColor.GREEN+Lang.translate("reloaded", core, time+""));
     }
 
-    @Subcommand("expired")
+    @Subcommand("expired|stash")
     @CommandPermission("nah.command.expired")
     public void onExpired(Player p) {
         Analytics.addCommandUse(core, "ah expired");
@@ -176,5 +178,29 @@ public class AhCommand extends BaseCommand {
     public void onSorts(Player p) {
         Analytics.addCommandUse(core, "ah sorts");
         NAHUtil.openSorts(p);
+    }
+
+    @Subcommand("player")
+    @CommandCompletion("@players")
+    public void onPlayer(Player p, String[] args) {
+        if (args.length == 0) {
+            if (p.hasPermission("nah.menu.player.own")) {
+                NAHUtil.openPlayerListings(p, p);
+            } else {
+                p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm", core));
+            }
+            return;
+        }
+
+        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+        if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
+            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("playerNull", core, args[0]));
+            return;
+        }
+        if (p.hasPermission("nah.menu.player.other")) {
+            NAHUtil.openPlayerListings(p, target);
+        } else {
+            p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm", core));
+        }
     }
 }

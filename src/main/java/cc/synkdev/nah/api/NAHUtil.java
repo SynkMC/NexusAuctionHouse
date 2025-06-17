@@ -7,6 +7,7 @@ import cc.synkdev.nah.api.events.ItemBanEvent;
 import cc.synkdev.nah.api.events.ItemUnbanEvent;
 import cc.synkdev.nah.gui.LogsGui;
 import cc.synkdev.nah.gui.MainGui;
+import cc.synkdev.nah.gui.PlayerAuctionsGui;
 import cc.synkdev.nah.gui.RetrieveGui;
 import cc.synkdev.nah.gui.sort.SortsManagementGui;
 import cc.synkdev.nah.manager.*;
@@ -16,6 +17,7 @@ import dev.triumphteam.gui.guis.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -268,5 +270,14 @@ public class NAHUtil {
      */
     public static void openSorts(Player p) {
         new SortsManagementGui().gui(1).open(p);
+    }
+
+    /**
+     * Open the GUI containing a player's auctions
+     * @param p The player who should see the GUI
+     * @param target The player who's auctions should be displayed
+     */
+    public static void openPlayerListings(Player p, OfflinePlayer target) {
+        new PlayerAuctionsGui().gui(p, target, 1).open(p);
     }
 }

@@ -59,7 +59,6 @@ public class ConfirmUnlistGui {
                 if (unlistEvent.isCancelled()) return;
 
                 core.runningBINs.remove(bAa);
-                bAa.setBuyable(false);
                 core.expiredBINs.add(bAa);
                 DataFileManager.sort();
                 pl.getInventory().addItem(this.item);

@@ -42,10 +42,9 @@ public class DataFileManager {
 
             while ((line = reader.readLine()) != null) {
                 String[] split = line.split(";");
-                Boolean buyable = split[6].equals("true");
-                BINAuction bA = new BINAuction(core.getId(), split[1], split[2], Long.parseLong(split[3]), Long.parseLong(split[4]), split[5], buyable);
+                BINAuction bA = new BINAuction(core.getId(), split[1], split[2], Long.parseLong(split[3]), Long.parseLong(split[4]), split[5]);
                 core.setId(core.getId() + 1);
-                if (buyable) {
+                if (bA.getBuyable()) {
                     running.add(bA);
                 } else {
                     if (Math.toIntExact(System.currentTimeMillis() / 1000) - bA.getExpiry() < core.getKeepLogTime())
@@ -112,9 +111,8 @@ public class DataFileManager {
                 for (Object o : bins) {
                     JSONObject obj = (JSONObject) o;
                     int id = obj.getInt("id");
-                    int compare = id;
-                    while (core.runningBINs.stream().anyMatch(bin -> bin.getId() == compare) || core.expiredBINs.stream().anyMatch(bin -> bin.getId() == compare)) {
-                        id = core.getId()+1;
+                    while (containsId(running, expiredBins, id)) {
+                        id = core.getId() + 1;
                         core.setId(id);
                     }
                     if (id > core.getId()) core.setId(id + 1);
@@ -123,11 +121,10 @@ public class DataFileManager {
                     long price = obj.getLong("price");
                     long expiry = obj.getLong("expiry");
                     String buyer = obj.getString("buyer");
-                    boolean buyable = obj.getBoolean("buyable");
-                    BINAuction bA = new BINAuction(id, seller, item, price, expiry, buyer, buyable);
+                    BINAuction bA = new BINAuction(id, seller, item, price, expiry, buyer);
                     if (bA.getItem().getType() == Material.AIR) continue;
 
-                    if (buyable) {
+                    if (bA.getBuyable()) {
                         running.add(bA);
                     } else {
                         if (Math.toIntExact(System.currentTimeMillis() / 1000) - bA.getExpiry() < core.getKeepLogTime())
@@ -183,6 +180,11 @@ public class DataFileManager {
         List<BINAuction> copy = new ArrayList<>(core.expiredBINs);
         core.expiredBINs.clear();
         core.expiredBINs.addAll(Util.reverseList(copy));
+    }
+
+    private static boolean containsId(List<BINAuction> running, List<BINAuction> expiredBins, int id) {
+        return running.stream().anyMatch(bin -> bin.getId() == id) ||
+                expiredBins.stream().anyMatch(bin -> bin.getId() == id);
     }
 
     public static void save() {

@@ -17,8 +17,7 @@ public class BINAuction {
     private long price;
     private long expiry;
     private UUID buyer = null;
-    private Boolean buyable;
-    public BINAuction(int id, String seller, String item, long price, long expiry, @Nullable String buyer, Boolean buyable) {
+    public BINAuction(int id, String seller, String item, long price, long expiry, @Nullable String buyer) {
         this.id = id;
         this.seller = UUID.fromString(seller);
         this.item = Util.deserializeItemstack(item);
@@ -27,9 +26,8 @@ public class BINAuction {
 
         assert buyer != null;
         if (!buyer.equalsIgnoreCase("")) this.buyer = UUID.fromString(buyer);
-
-        this.buyable = buyable;
     }
+
     public BINAuction(int id, UUID seller, ItemStack item, long price, long expiry) {
         this.id = id;
         this.seller = seller;
@@ -37,7 +35,6 @@ public class BINAuction {
         this.price = price;
         this.expiry = expiry;
         this.buyer = null;
-        this.buyable = true;
     }
     public JSONObject export() {
         JSONObject obj = new JSONObject();
@@ -47,8 +44,11 @@ public class BINAuction {
         obj.put("price", price);
         obj.put("expiry", expiry);
         obj.put("buyer", buyer == null ? "" : buyer.toString());
-        obj.put("buyable", buyable);
         return obj;
+    }
+
+    public Boolean getBuyable() {
+        return getBuyer() == null && getExpiry() > (System.currentTimeMillis()/1000);
     }
 
 }

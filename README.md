@@ -31,6 +31,7 @@ A simple and optimized Auction House plugin
 - Configurable date format
 - Customizable item sorts
 - AnvilGUI input
+- Per-player auctions menu
 
 ## Developer API
 The plugin now features a developer API.
@@ -49,7 +50,7 @@ The JavaDocs can be found [here](https://synkdev.cc/storage/javadocs/nah)
 	<dependency>
 	    <groupId>com.github.SynkMC</groupId>
 	    <artifactId>NexusAuctionHouse</artifactId>
-	    <version>2.0.1</version>
+	    <version>2.1</version>
 	    <scope>provided</scope>
 	</dependency>
 ```
@@ -64,6 +65,6 @@ dependencyResolutionManagement {
 	}
 
 dependencies {
-	        implementation 'com.github.SynkMC:NexusAuctionHouse:2.0.1'
+	        implementation 'com.github.SynkMC:NexusAuctionHouse:2.1'
 	}
 ```

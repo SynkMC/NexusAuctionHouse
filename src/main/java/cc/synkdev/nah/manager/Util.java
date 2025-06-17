@@ -7,6 +7,7 @@ import cc.synkdev.synkLibs.bukkit.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -249,5 +250,7 @@ public class Util {
 
         return result;
     }
-
+    public static List<BINAuction> getPlayerListings(OfflinePlayer pl) {
+        return core.runningBINs.stream().filter(bin -> bin.getSeller().equals(pl.getUniqueId())).toList();
+    }
 }

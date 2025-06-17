@@ -15,6 +15,9 @@ permissions:
   nah.command.expired:
     description: "View expired auctions"
     default: true
+  nah.command.stash:
+    description: "View expired auctions and items which couldn't be added to your inventory"
+    default: true
   nah.command.sell:
     description: "Sell an item on the auction house"
     default: true
@@ -69,6 +72,12 @@ permissions:
   nah.manage.give:
     description: "Give yourself a listing's item"
     default: op
+  nah.menu.player.own:
+    description: "Allow the player to open their own auctions"
+    default: true
+  nah.menu.player.other:
+    description: "Allow the player to open other players' auctions"
+    default: true
 softdepend:
   - SynkLibs
   - Vault

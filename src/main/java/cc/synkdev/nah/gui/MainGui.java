@@ -88,6 +88,25 @@ public class MainGui {
         }
 
         gui.setItem(6, 2, search());
+        gui.setItem(6, 9, ItemBuilder.from(Material.CHEST)
+                .name(Component.text(ChatColor.GOLD+Lang.translate("titleRetrieve", core)))
+                        .lore(Component.text(""), Component.text("  "+Lang.translate("retrieveCount", core, core.retrieveMap.getOrDefault(p.getUniqueId(), new ArrayList<>()).size()+"")), Component.text(""), Component.text(Lang.translate("clickBrowse", core)))
+                .asGuiItem(event -> {
+                    NAHUtil.openExpiredGui(p);
+                }));
+        if (p.hasPermission("nah.menu.player.own")) {
+                gui.setItem(6, 5, ItemBuilder.skull().owner(p)
+                        .name(Component.text(Lang.translate("viewOwn", core)))
+                        .lore(Component.empty(), Component.text(Lang.translate("clickBrowse", core)))
+                        .asGuiItem(event -> {
+                            if (event.getWhoClicked().hasPermission("nah.menu.player.own")) {
+                                NAHUtil.openPlayerListings(p, p);
+                            } else {
+                                event.getWhoClicked().sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm", core));
+                            }
+                        })
+                );
+            }
         return gui;
     }
     GuiItem arrowLeft(int page) {

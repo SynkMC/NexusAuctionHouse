@@ -68,6 +68,10 @@ public class RetrieveGui {
                     Player p = (Player) event.getWhoClicked();
                     List<ItemStack> list = core.retrieveMap.getOrDefault(p.getUniqueId(), new ArrayList<>());
                     if (!list.isEmpty() && list.contains(item)) {
+                        if (p.getInventory().firstEmpty() == -1) {
+                            p.sendMessage(core.prefix()+Lang.translate("fullInv", core));
+                            return;
+                        }
                         p.getInventory().addItem(item);
                         list.remove(item);
                         if (!list.isEmpty()) {

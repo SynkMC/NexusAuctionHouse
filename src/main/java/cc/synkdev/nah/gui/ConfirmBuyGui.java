@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ConfirmBuyGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
@@ -62,9 +63,17 @@ public class ConfirmBuyGui {
                     core.getEcon().withdrawPlayer(pl, bA.getPrice()+tax);
                     core.getEcon().depositPlayer(Bukkit.getOfflinePlayer(bA.getSeller()), bA.getPrice());
                     if (Util.isOnline(bA.getSeller())) Bukkit.getPlayer(bA.getSeller()).sendMessage(core.prefix()+ChatColor.GOLD+ pl.getName()+" "+Lang.translate("smnBought", core, bA.getPrice()+""));
-                    pl.getInventory().addItem(bA.getItem());
+
+                    if (pl.getInventory().firstEmpty() == -1) {
+                        List<ItemStack> list = core.retrieveMap.getOrDefault(pl.getUniqueId(), new ArrayList<>());
+                        list.add(bA.getItem());
+                        core.retrieveMap.put(pl.getUniqueId(), list);
+                        pl.sendMessage(core.prefix()+Lang.translate("buyInvFull", core));
+                    } else {
+                        pl.getInventory().addItem(bA.getItem());
+                    }
+
                     core.runningBINs.remove(bA);
-                    bA.setBuyable(false);
                     bA.setBuyer(pl.getUniqueId());
                     core.expiredBINs.add(bA);
                     DataFileManager.sort();

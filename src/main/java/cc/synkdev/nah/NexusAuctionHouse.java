@@ -173,7 +173,6 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
                 int time = Math.toIntExact(System.currentTimeMillis()/1000);
                 if (time>=binAuction.getExpiry()) {
                     if (Util.isOnline(binAuction.getSeller())) Bukkit.getPlayer(binAuction.getSeller()).sendMessage(prefix()+ChatColor.GOLD+Lang.translate("expired", getInstance()));
-                    binAuction.setBuyable(false);
                     list.add(binAuction);
                 }
             }
@@ -299,7 +298,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "2.0.1";
+        return "2.1";
     }
 
     @Override
