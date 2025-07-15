@@ -78,6 +78,9 @@ permissions:
   nah.menu.player.other:
     description: "Allow the player to open other players' auctions"
     default: true
+  nah.manage.unlist.own:
+    description: "Unlist your own auctions"
+    default: true
 softdepend:
   - SynkLibs
   - Vault
