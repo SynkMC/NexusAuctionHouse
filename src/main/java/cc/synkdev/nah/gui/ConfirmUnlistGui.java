@@ -53,6 +53,7 @@ public class ConfirmUnlistGui {
             BINAuction bAa = NAHUtil.getAuction(bA.getId());
             if (bAa.getBuyable()) {
                 bAa.setItem(this.item);
+                bAa.setBuyer(bAa.getSeller());
                 ItemUnlistEvent unlistEvent = new ItemUnlistEvent(pl, bAa);
                 Bukkit.getPluginManager().callEvent(unlistEvent);
 

@@ -23,9 +23,11 @@ public class PlayerAuctionsGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     int page;
     int max;
+    MainGuiSnapshot snapshot;
     OfflinePlayer target;
     List<BINAuction> contents;
-    public Gui gui(Player p, OfflinePlayer target, int page) {
+    public Gui gui(Player p, OfflinePlayer target, int page, MainGuiSnapshot snapshot) {
+        this.snapshot = snapshot;
         this.contents = Util.getPlayerListings(target);
         core.checkExpiry.run();
         max = (contents.size()+39)/40;
@@ -47,7 +49,13 @@ public class PlayerAuctionsGui {
 
         fillGui(gui, p, page);
 
-
+        /*gui.setItem(6, 5, ItemBuilder.from(Material.BARRIER)
+                .name(snapshot == null ? Component.text(ChatColor.RED+Lang.translate("close", core)) : Component.text(ChatColor.RED+Lang.translate("back", core)))
+                .asGuiItem(event -> {
+                    if (snapshot != null) {
+                        new MainGui().gui(p, snapshot.getPage(), snapshot.getSearch(), snapshot.getFirstSort(), snapshot.getItSort()).open(p);
+                    }
+                }));*/
         return gui;
     }
     GuiItem arrowLeft(int page) {
@@ -55,7 +63,7 @@ public class PlayerAuctionsGui {
                 .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
-                    gui(p, target, page-1).open(p);
+                    gui(p, target, page-1, snapshot).open(p);
                 });
     }
     GuiItem arrowRight(int page) {
@@ -63,7 +71,7 @@ public class PlayerAuctionsGui {
                 .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
-                    gui(p, target, page+1).open(p);
+                    gui(p, target, page+1, snapshot).open(p);
                 });
     }
     private void fillGui(Gui gui, Player p, int page) {
@@ -110,7 +118,7 @@ public class PlayerAuctionsGui {
                     }
                     if (!bAa.getBuyable()) {
                         p.sendMessage(core.prefix()+Lang.translate("already-bought", core));
-                        gui(p, target, page).open(p);
+                        gui(p, target, page, snapshot).open(p);
                         return;
                     }
 

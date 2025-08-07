@@ -278,6 +278,6 @@ public class NAHUtil {
      * @param target The player who's auctions should be displayed
      */
     public static void openPlayerListings(Player p, OfflinePlayer target) {
-        new PlayerAuctionsGui().gui(p, target, 1).open(p);
+        new PlayerAuctionsGui().gui(p, target, 1, null).open(p);
     }
 }

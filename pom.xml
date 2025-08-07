@@ -6,7 +6,7 @@
 
     <groupId>cc.synkdev</groupId>
     <artifactId>NexusAuctionHouse</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
     <packaging>jar</packaging>
 
     <name>NexusAuctionHouse</name>
@@ -101,9 +101,10 @@
         </repository>
 
         <repository>
-            <id>granny-snapshot</id>
-            <url>https://repo.granny.dev/snapshots/</url>
+            <id>triumph-snapshot</id>
+            <url>https://repo.triumphteam.dev/snapshots/</url>
         </repository>
+
     </repositories>
 
     <dependencies>
@@ -135,16 +136,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency> <!-- Temporary -->
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.4.1-granny-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
-            <version>3.1.7</version>
+            <version>3.1.13-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -175,7 +170,7 @@
         <dependency>
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>1.10.5-SNAPSHOT</version>
+            <version>1.10.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

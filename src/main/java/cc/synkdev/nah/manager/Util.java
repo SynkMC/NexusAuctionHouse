@@ -168,6 +168,12 @@ public class Util {
     public static Boolean isSeller(Player p, BINAuction bA) {
         return p.getUniqueId().equals(bA.getSeller());
     }
+    public static Boolean isOnline(UUID u) {
+        return Bukkit.getOfflinePlayer(u).isOnline();
+    }
+    public static String getName(UUID u) {
+        return Bukkit.getOfflinePlayer(u).getName();
+    }
     public static long parseDurationToSeconds(String input) {
         Map<String, Long> timeUnits = Map.of(
                 "s", 1L,
@@ -200,12 +206,6 @@ public class Util {
                 throw new IllegalArgumentException("Invalid time string", e);
             }
         }
-    }
-    public static Boolean isOnline(UUID u) {
-        return Bukkit.getOfflinePlayer(u).isOnline();
-    }
-    public static String getName(UUID u) {
-        return Bukkit.getOfflinePlayer(u).getName();
     }
     public static String formatTimestamp(long timestampInSeconds) {
         long timestampInMilliseconds = timestampInSeconds * 1000;

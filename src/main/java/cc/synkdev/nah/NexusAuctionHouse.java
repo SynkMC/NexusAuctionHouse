@@ -298,7 +298,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "2.1.1";
+        return "2.1.2";
     }
 
     @Override
