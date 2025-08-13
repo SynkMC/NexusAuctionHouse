@@ -7,3 +7,6 @@ expiry:
   enable: true #If set to true, items not bought within the time set below will be unlisted.
   time: 7d
 date-format: yyyy-MM-dd HH:mm:ss #Make sure to respect the formatting when editing this (caps etc.)
+price-limits:
+  min: 0
+  max: 0 #Set to 0 for no limit

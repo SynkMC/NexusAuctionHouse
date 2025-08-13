@@ -49,13 +49,13 @@ public class PlayerAuctionsGui {
 
         fillGui(gui, p, page);
 
-        /*gui.setItem(6, 5, ItemBuilder.from(Material.BARRIER)
-                .name(snapshot == null ? Component.text(ChatColor.RED+Lang.translate("close", core)) : Component.text(ChatColor.RED+Lang.translate("back", core)))
-                .asGuiItem(event -> {
-                    if (snapshot != null) {
+        if (snapshot != null) {
+            gui.setItem(6, 5, ItemBuilder.from(Material.BARRIER)
+                    .name(snapshot == null ? Component.text(ChatColor.RED + Lang.translate("close", core)) : Component.text(ChatColor.RED + Lang.translate("back", core)))
+                    .asGuiItem(event -> {
                         new MainGui().gui(p, snapshot.getPage(), snapshot.getSearch(), snapshot.getFirstSort(), snapshot.getItSort()).open(p);
-                    }
-                }));*/
+                    }));
+        }
         return gui;
     }
     GuiItem arrowLeft(int page) {

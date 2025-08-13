@@ -91,6 +91,16 @@ public class AhCommand extends BaseCommand {
             return;
         }
 
+        if (price <= core.getMinPrice()) {
+            p.sendMessage(core.prefix() + ChatColor.RED + Lang.translate("belowMinPrice", core, core.getMinPrice()+""));
+            return;
+        }
+
+        if (core.getMaxPrice() != 0 && price >= core.getMaxPrice()) {
+            p.sendMessage(core.prefix() + ChatColor.RED + Lang.translate("aboveMaxPrice", core, core.getMaxPrice()+""));
+            return;
+        }
+
         Gui gui = new ConfirmSellGui().gui(p, price);
         gui.open(p);
 
@@ -185,7 +195,7 @@ public class AhCommand extends BaseCommand {
     public void onPlayer(Player p, String[] args) {
         if (args.length == 0) {
             if (p.hasPermission("nah.menu.player.own")) {
-                NAHUtil.openPlayerListings(p, p);
+                NAHUtil.openPlayerListings(p, p, null);
             } else {
                 p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm", core));
             }
@@ -198,7 +208,7 @@ public class AhCommand extends BaseCommand {
             return;
         }
         if (p.hasPermission("nah.menu.player.other")) {
-            NAHUtil.openPlayerListings(p, target);
+            NAHUtil.openPlayerListings(p, target, null);
         } else {
             p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm", core));
         }

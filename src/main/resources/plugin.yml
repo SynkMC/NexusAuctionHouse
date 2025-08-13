@@ -81,6 +81,9 @@ permissions:
   nah.manage.unlist.own:
     description: "Unlist your own auctions"
     default: true
+  nah.pricelimit.bypass:
+    description: "Bypass the price limit"
+    default: op
 softdepend:
   - SynkLibs
   - Vault

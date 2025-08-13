@@ -5,10 +5,7 @@ import cc.synkdev.nah.api.events.AHToggleEvent;
 import cc.synkdev.nah.api.events.AuctionEditEvent;
 import cc.synkdev.nah.api.events.ItemBanEvent;
 import cc.synkdev.nah.api.events.ItemUnbanEvent;
-import cc.synkdev.nah.gui.LogsGui;
-import cc.synkdev.nah.gui.MainGui;
-import cc.synkdev.nah.gui.PlayerAuctionsGui;
-import cc.synkdev.nah.gui.RetrieveGui;
+import cc.synkdev.nah.gui.*;
 import cc.synkdev.nah.gui.sort.SortsManagementGui;
 import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
@@ -276,8 +273,9 @@ public class NAHUtil {
      * Open the GUI containing a player's auctions
      * @param p The player who should see the GUI
      * @param target The player who's auctions should be displayed
+     * @param snapshot Main GUI snapshot for back button
      */
-    public static void openPlayerListings(Player p, OfflinePlayer target) {
-        new PlayerAuctionsGui().gui(p, target, 1, null).open(p);
+    public static void openPlayerListings(Player p, OfflinePlayer target, MainGuiSnapshot snapshot) {
+        new PlayerAuctionsGui().gui(p, target, 1, snapshot).open(p);
     }
 }

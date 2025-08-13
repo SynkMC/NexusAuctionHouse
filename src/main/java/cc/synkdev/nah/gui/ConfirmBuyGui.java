@@ -78,7 +78,7 @@ public class ConfirmBuyGui {
                     core.expiredBINs.add(bA);
                     DataFileManager.sort();
                     pl.closeInventory();
-                    WebhookManager.sendWebhook("listing-bought", null, pl.getName(), Util.getName(bA.getSeller()), bA.getPrice()+"");
+                    WebhookManager.sendWebhook("listing-bought", bA, pl.getName(), Util.getName(bA.getSeller()), bA.getPrice()+"");
                     pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successBuy", core, Util.getName(bA.getSeller()), bA.getPrice()+""));
                 } else {
                     pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughBuy", core));

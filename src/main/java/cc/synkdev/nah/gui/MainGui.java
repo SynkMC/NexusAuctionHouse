@@ -31,7 +31,11 @@ public class MainGui {
     String searchS;
     int firstSort;
     ItemSort itSort;
+    Player p;
+    MainGuiSnapshot snapshot;
     public Gui gui(Player p, int page, String search, int firstSort, ItemSort itSort) {
+        snapshot = new MainGuiSnapshot(page, search, firstSort, itSort);
+        this.p = p;
         core.checkExpiry.run();
         this.page = page;
         this.searchS = search;
@@ -100,7 +104,7 @@ public class MainGui {
                         .lore(Component.empty(), Component.text(Lang.translate("clickBrowse", core)))
                         .asGuiItem(event -> {
                             if (event.getWhoClicked().hasPermission("nah.menu.player.own")) {
-                                NAHUtil.openPlayerListings(p, p);
+                                NAHUtil.openPlayerListings(p, p, new MainGuiSnapshot(page, search, firstSort, itSort));
                             } else {
                                 event.getWhoClicked().sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm", core));
                             }
@@ -189,7 +193,7 @@ public class MainGui {
         if (staff) {
             lore.add(Component.text(Lang.translate("staffMenu", core)));
         }
-        if (self) {
+        if (p.hasPermission("nah.manage.unlist.own") && self) {
             lore.add(Component.text(Lang.translate("own-lore", core)));
         }
         return ItemBuilder.from(copy)
@@ -217,7 +221,7 @@ public class MainGui {
                         return;
                     }
 
-                    if (event.isRightClick() && self) {
+                    if (event.isRightClick() && self && p.hasPermission("nah.manage.unlist.own")) {
                         Gui gui = new ConfirmUnlistGui().gui(p, bAa);
                         gui.open(p);
                         return;

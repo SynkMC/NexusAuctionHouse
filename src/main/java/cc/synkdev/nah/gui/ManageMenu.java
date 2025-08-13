@@ -92,7 +92,7 @@ public class ManageMenu {
 
                     core.runningBINs.remove(bA);
                     Player seller = Bukkit.getPlayer(bA.getSeller());
-                    if (seller.isOnline()) seller.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("auctionDeleted", core, p.getDisplayName()));
+                    if (seller != null && seller.isOnline()) seller.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("auctionDeleted", core, p.getDisplayName()));
                     p.getInventory().addItem(bA.getItem());
                     DataFileManager.sort();
                     p.closeInventory();

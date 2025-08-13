@@ -59,6 +59,8 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
     @Getter @Setter private Boolean toggle = true;
     @Getter @Setter private int id = 0;
     @Getter private String dateFormat;
+    @Getter private int minPrice;
+    @Getter private int maxPrice;
 
     @Override
     public void onEnable() {
@@ -248,6 +250,8 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
         buyTaxPercent = getConfig().getInt("tax.buy-tax");
         sellTaxPercent = getConfig().getInt("tax.sell-tax");
         dateFormat = getConfig().getString("date-format");
+        minPrice = getConfig().getInt("price-limits.min");
+        maxPrice = getConfig().getInt("price-limits.max");
     }
 
     public void reloadLang() {
@@ -298,7 +302,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "2.1.2";
+        return "2.2";
     }
 
     @Override
