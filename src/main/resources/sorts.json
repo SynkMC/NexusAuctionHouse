@@ -1,4 +1,6 @@
-{"sorts": [
+{
+  "note": "To edit this, either stop the server first, or use /ah sorts!",
+  "sorts": [
   {
     "contents": [
       "BOW",

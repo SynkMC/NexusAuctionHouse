@@ -33,7 +33,7 @@ public class ItemSortsManager {
                     for (Object content : contents) {
                         list.add(Material.valueOf((String) content));
                     }
-                    core.itemSorts.put(sort.getString("name"), new ItemSort(sort.getString("name"), Material.valueOf(sort.getString("icon")), list));
+                    core.itemSorts.put(Util.color(sort.getString("name")), new ItemSort(sort.getString("name"), Material.valueOf(sort.getString("icon")), list));
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

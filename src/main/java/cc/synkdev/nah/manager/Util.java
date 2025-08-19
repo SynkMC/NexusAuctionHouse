@@ -6,6 +6,7 @@ import cc.synkdev.nah.objects.SortingTypes;
 import cc.synkdev.synkLibs.bukkit.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -252,5 +253,9 @@ public class Util {
     }
     public static List<BINAuction> getPlayerListings(OfflinePlayer pl) {
         return core.runningBINs.stream().filter(bin -> bin.getSeller().equals(pl.getUniqueId())).toList();
+    }
+
+    public static String color(String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
     }
 }

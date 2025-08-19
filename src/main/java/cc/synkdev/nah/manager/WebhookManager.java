@@ -46,6 +46,13 @@ public class WebhookManager {
         }
     }
 
+    public static String sanitizeColors(String s) {
+        for (ChatColor color : ChatColor.values()) {
+            s = s.replaceAll("§"+color.getChar(), "");
+        }
+        return s;
+    }
+
     public static void sendWebhook(String key, BINAuction bA, String... args) {
         if (!status) return;
         if (url == null) {
@@ -58,7 +65,7 @@ public class WebhookManager {
         DiscordWebhook wh = new DiscordWebhook(url);
         wh.setUsername("NexusAuctionHouse");
         wh.setAvatarUrl("https://synkdev.cc/img/nah.png");
-        String desc = Util.sanitizeDiscordMsg(Util.addPlaceholders(config.getString("webhook-descriptions."+key), args)+"\n"+(!key.equals("ah-toggle") ? bA.getItem().getAmount()+"x "+(bA.getItem().getItemMeta().getDisplayName().isEmpty() ? bA.getItem().getType().name() : bA.getItem().getItemMeta().getDisplayName()) : ""));
+        String desc = Util.sanitizeDiscordMsg(Util.addPlaceholders(config.getString("webhook-descriptions."+key), args)+"\n"+(!key.equals("ah-toggle") ? bA.getItem().getAmount()+"x "+(bA.getItem().getItemMeta().getDisplayName().isEmpty() ? bA.getItem().getType().name() : sanitizeColors(bA.getItem().getItemMeta().getDisplayName())) : ""));
         DiscordWebhook.EmbedObject embed = new DiscordWebhook.EmbedObject().setTitle(config.getString("webhook-titles."+key)).setDescription(desc);
         if (!key.equals("ah-toggle")) {
             embed.setThumbnail("https://raw.githubusercontent.com/Mojang/bedrock-samples/refs/heads/main/resource_pack/textures/items/"+bA.getItem().getType().getKey().getKey().toLowerCase()+".png");
