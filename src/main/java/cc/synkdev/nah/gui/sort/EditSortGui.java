@@ -1,8 +1,9 @@
 package cc.synkdev.nah.gui.sort;
 
 import cc.synkdev.nah.NexusAuctionHouse;
+import cc.synkdev.nah.manager.Util;
 import cc.synkdev.nah.objects.ItemSort;
-import cc.synkdev.synkLibs.bukkit.Lang;
+import cc.synkdev.nexusCore.bukkit.Lang;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
@@ -49,9 +50,9 @@ public class EditSortGui {
                         }
 
                         String name = sort.getName();
-                        sort.setName(stateSnapshot.getText());
+                        sort.setName(Util.color(stateSnapshot.getText()));
                         core.itemSorts.remove(name);
-                        core.itemSorts.put(stateSnapshot.getText(), sort);
+                        core.itemSorts.put(Util.color(stateSnapshot.getText()), sort);
 
                         gui(sort).open(stateSnapshot.getPlayer());
                         return List.of();

@@ -3,7 +3,7 @@ package cc.synkdev.nah.manager;
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.objects.DiscordWebhook;
-import cc.synkdev.synkLibs.bukkit.Utils;
+import cc.synkdev.nexusCore.bukkit.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -47,10 +47,8 @@ public class WebhookManager {
     }
 
     public static String sanitizeColors(String s) {
-        for (ChatColor color : ChatColor.values()) {
-            s = s.replaceAll("§"+color.getChar(), "");
-        }
-        return s;
+        if (s == null) return null;
+        return s.replaceAll("§.", "");
     }
 
     public static void sendWebhook(String key, BINAuction bA, String... args) {

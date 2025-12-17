@@ -85,5 +85,5 @@ permissions:
     description: "Bypass the price limit"
     default: op
 softdepend:
-  - SynkLibs
+  - NexusCore
   - Vault

@@ -9,7 +9,7 @@ import cc.synkdev.nah.gui.*;
 import cc.synkdev.nah.gui.sort.SortsManagementGui;
 import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
-import cc.synkdev.synkLibs.bukkit.Lang;
+import cc.synkdev.nexusCore.bukkit.Lang;
 import dev.triumphteam.gui.guis.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

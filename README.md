@@ -5,7 +5,7 @@ A simple and optimized Auction House plugin
 - Java 8+
 - A Minecraft server above 1.13
 - [Vault](https://www.spigotmc.org/resources/vault.34315/)
-- [SynkLibs](https://modrinth.com/plugin/synklibs)
+- [NexusCore](https://modrinth.com/plugin/nexuscore)
 
 ## Commands and permissions
 - /ah - opens the Auction House menu
@@ -50,7 +50,7 @@ The JavaDocs can be found [here](https://synkdev.cc/storage/javadocs/nah)
 	<dependency>
 	    <groupId>com.github.SynkMC</groupId>
 	    <artifactId>NexusAuctionHouse</artifactId>
-	    <version>2.1</version>
+	    <version>{VERSION}</version>
 	    <scope>provided</scope>
 	</dependency>
 ```
@@ -65,6 +65,6 @@ dependencyResolutionManagement {
 	}
 
 dependencies {
-	        implementation 'com.github.SynkMC:NexusAuctionHouse:2.1'
+	        implementation 'com.github.SynkMC:NexusAuctionHouse:{VERSION}'
 	}
 ```

@@ -6,7 +6,7 @@ import cc.synkdev.nah.manager.Util;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.objects.ItemSort;
 import cc.synkdev.nah.objects.SortingTypes;
-import cc.synkdev.synkLibs.bukkit.Lang;
+import cc.synkdev.nexusCore.bukkit.Lang;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.util.GuiFiller;
 import dev.triumphteam.gui.guis.Gui;
@@ -323,8 +323,6 @@ public class MainGui {
                         NAHUtil.open(p, false, stateSnapshot.getText(), 1);
                         return List.of();
                     });
-
-                    anvil.onClose(stateSnapshot -> NAHUtil.open(p, false, stateSnapshot.getText(), 1));
                     anvil.open(p);
                 });
     }

@@ -5,9 +5,9 @@ import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.objects.ItemSort;
 import cc.synkdev.nah.objects.SortingTypes;
-import cc.synkdev.synkLibs.bukkit.Analytics;
-import cc.synkdev.synkLibs.bukkit.Lang;
-import cc.synkdev.synkLibs.components.SynkPlugin;
+import cc.synkdev.nexusCore.bukkit.Analytics;
+import cc.synkdev.nexusCore.bukkit.Lang;
+import cc.synkdev.nexusCore.components.NexusPlugin;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageKeys;
 import lombok.Getter;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
-public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, Listener {
+public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, Listener {
     @Getter private static NexusAuctionHouse instance;
     File configFile = new File(this.getDataFolder(), "config.yml");
     File langFile = new File(this.getDataFolder(), "lang.json");
@@ -65,8 +65,8 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
     @Override
     public void onEnable() {
         missingDeps.clear();
-        if (!Bukkit.getPluginManager().isPluginEnabled("SynkLibs")) {
-            missingDeps.add("SynkLibs");
+        if (!Bukkit.getPluginManager().isPluginEnabled("NexusCore")) {
+            missingDeps.add("NexusCore");
         }
         if (!Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             missingDeps.add("Vault");
@@ -256,7 +256,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     public void reloadLang() {
         langMap.clear();
-        langMap.putAll(cc.synkdev.synkLibs.bukkit.Lang.init(this, langFile));
+        langMap.putAll(Lang.init(this, langFile));
     }
 
     public void save() {
@@ -302,7 +302,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements SynkPlugin, L
 
     @Override
     public String ver() {
-        return "2.2.1";
+        return "2.2.2";
     }
 
     @Override

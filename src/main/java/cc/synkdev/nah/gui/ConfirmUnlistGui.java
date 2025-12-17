@@ -5,7 +5,7 @@ import cc.synkdev.nah.api.NAHUtil;
 import cc.synkdev.nah.api.events.ItemUnlistEvent;
 import cc.synkdev.nah.manager.DataFileManager;
 import cc.synkdev.nah.objects.BINAuction;
-import cc.synkdev.synkLibs.bukkit.Lang;
+import cc.synkdev.nexusCore.bukkit.Lang;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -17,6 +17,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfirmUnlistGui {
     private final NexusAuctionHouse core = NexusAuctionHouse.getInstance();
@@ -62,7 +65,13 @@ public class ConfirmUnlistGui {
                 core.runningBINs.remove(bAa);
                 core.expiredBINs.add(bAa);
                 DataFileManager.sort();
-                pl.getInventory().addItem(this.item);
+                if (pl.getInventory().firstEmpty() != -1) pl.getInventory().addItem(this.item);
+                else {
+                    List<ItemStack> retrieveList = new ArrayList<>(core.retrieveMap.getOrDefault(pl.getUniqueId(), new ArrayList<>()));
+                    retrieveList.add(this.item);
+                    core.retrieveMap.put(pl.getUniqueId(), retrieveList);
+                    pl.sendMessage(Lang.translate("retrieveFull", core));
+                }
             }
             NAHUtil.open(pl, false, null, 1);
         });
