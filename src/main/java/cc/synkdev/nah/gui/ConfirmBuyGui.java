@@ -79,6 +79,7 @@ public class ConfirmBuyGui {
                     DataFileManager.sort();
                     pl.closeInventory();
                     WebhookManager.sendWebhook("listing-bought", bA, pl.getName(), Util.getName(bA.getSeller()), bA.getPrice()+"");
+                    core.money = core.money+Math.toIntExact(bA.getPrice());
                     pl.sendMessage(core.prefix() + ChatColor.GREEN + Lang.translate("successBuy", core, Util.getName(bA.getSeller()), bA.getPrice()+""));
                 } else {
                     pl.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("notEnoughBuy", core));

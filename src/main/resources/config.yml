@@ -10,3 +10,4 @@ date-format: yyyy-MM-dd HH:mm:ss #Make sure to respect the formatting when editi
 price-limits:
   min: 0
   max: 0 #Set to 0 for no limit
+lang: en #ALlows you to customize the language of the plugin. If you want to make your own, set this to 'custom'.

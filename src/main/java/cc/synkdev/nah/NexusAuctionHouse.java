@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,7 +42,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
     @Getter private long expireTime;
     @Getter private int buyTaxPercent;
     @Getter private int sellTaxPercent;
-    public FileConfiguration lang;
+    public String lang;
     public List<BINAuction> expiredBINs = new ArrayList<>();
     public List<BINAuction> runningBINs = new ArrayList<>();
     public List<BINAuction> sortPrice = new ArrayList<>();
@@ -52,6 +53,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
     public Map<UUID, SortingTypes> playerSortingTypes = new HashMap<>();
     public Map<UUID, List<ItemStack>> retrieveMap = new HashMap<>();
     public List<SortingTypes> sortingTypes;
+    public int money = 0;
     @Getter private Economy econ = null;
     public Map<String, String> langMap = new HashMap<>();
     public List<Material> banned = new ArrayList<>();
@@ -76,26 +78,16 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
         }
 
         if (!missingDeps.isEmpty()) {
-            int index = 0;
             String s;
             if (missingDeps.size() == 1) {
                 s = missingDeps.get(0);
             } else {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < missingDeps.size()-1; i++) {
-                    sb.append(missingDeps.get(i)).append(", ");
-                    index++;
-                }
-                sb.append(missingDeps.get(index+1));
-                s = sb.toString();
+                s = String.join(", ", missingDeps);
             }
             Bukkit.getLogger().info("You are missing plugin dependancies! Please download the following: "+s);
             Bukkit.getPluginManager().registerEvents(this, this);
         } else {
             instance = this;
-
-            new Metrics(this, 23102);
-            Analytics.registerSpl(this);
 
             updateConfig();
             loadConfig();
@@ -106,6 +98,11 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
             DataFileManager.load();
             DataFileManager.sort();
             loadSorts();
+
+            Metrics metrics = new Metrics(this, 23102);
+            metrics.addCustomChart(new SingleLineChart("money", () -> money));
+            metrics.addCustomChart(new SingleLineChart("volume", () -> runningBINs.size()));
+            Analytics.registerSpl(this);
 
             BannedItemsManager.read();
             ToggleManager.read();
@@ -252,11 +249,12 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
         dateFormat = getConfig().getString("date-format");
         minPrice = getConfig().getInt("price-limits.min");
         maxPrice = getConfig().getInt("price-limits.max");
+        lang = getConfig().getString("lang");
     }
 
     public void reloadLang() {
         langMap.clear();
-        langMap.putAll(Lang.init(this, langFile));
+        langMap.putAll(Lang.init(this, langFile, lang));
     }
 
     public void save() {
@@ -302,7 +300,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
 
     @Override
     public String ver() {
-        return "2.2.2";
+        return "2.2.3";
     }
 
     @Override

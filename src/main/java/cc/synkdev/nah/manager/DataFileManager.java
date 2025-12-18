@@ -107,6 +107,7 @@ public class DataFileManager {
 
             if (!sb.toString().isEmpty()) {
                 JSONObject binsO = new JSONObject(sb.toString());
+                if (binsO.has("money")) core.money = binsO.getInt("money");
                 JSONArray bins = binsO.getJSONArray("bins");
                 for (Object o : bins) {
                     JSONObject obj = (JSONObject) o;
@@ -192,6 +193,7 @@ public class DataFileManager {
             File temp = new File(folder, "temp-" + System.currentTimeMillis() + ".json");
             BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
             JSONObject binObj = new JSONObject();
+            binObj.put("money", core.money);
             JSONArray bins = new JSONArray();
             for (BINAuction bin : core.expiredBINs) {
                 bins.put(bin.export());
