@@ -8,7 +8,7 @@ import cc.synkdev.nexusCore.bukkit.Analytics;
 import cc.synkdev.nexusCore.bukkit.Lang;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import dev.triumphteam.gui.guis.Gui;
+import cc.synkdev.triumph.guis.Gui;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

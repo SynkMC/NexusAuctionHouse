@@ -10,7 +10,8 @@ import cc.synkdev.nah.gui.sort.SortsManagementGui;
 import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nexusCore.bukkit.Lang;
-import dev.triumphteam.gui.guis.Gui;
+import cc.synkdev.nexusCore.bukkit.NexusUtils;
+import cc.synkdev.triumph.guis.Gui;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -84,7 +85,7 @@ public class NAHUtil {
     public static Long reload() {
         long time = System.currentTimeMillis();
         core.save();
-        core.reloadLang();
+        NexusUtils.initLang(core, core.langMap, core.lang);
         core.reloadConfig();
         ItemSortsManager.read();
         WebhookManager.read();
@@ -244,8 +245,7 @@ public class NAHUtil {
             if (s.startsWith("nah.slots.")) {
                 try {
                     slots = Integer.parseInt(s.replace("nah.slots.", ""));
-                } catch (NumberFormatException e) {
-                    continue;
+                } catch (NumberFormatException _) {
                 }
             }
         }
@@ -272,7 +272,7 @@ public class NAHUtil {
     /**
      * Open the GUI containing a player's auctions
      * @param p The player who should see the GUI
-     * @param target The player who's auctions should be displayed
+     * @param target The player whose auctions should be displayed
      * @param snapshot Main GUI snapshot for back button
      */
     public static void openPlayerListings(Player p, OfflinePlayer target, MainGuiSnapshot snapshot) {

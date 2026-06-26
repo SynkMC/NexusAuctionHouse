@@ -1,5 +1,8 @@
 package cc.synkdev.nah;
 
+import cc.synkdev.bstats.bukkit.Metrics;
+import cc.synkdev.bstats.charts.SimplePie;
+import cc.synkdev.bstats.charts.SingleLineChart;
 import cc.synkdev.nah.commands.AhCommand;
 import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
@@ -7,22 +10,17 @@ import cc.synkdev.nah.objects.ItemSort;
 import cc.synkdev.nah.objects.SortingTypes;
 import cc.synkdev.nexusCore.bukkit.Analytics;
 import cc.synkdev.nexusCore.bukkit.Lang;
-import cc.synkdev.nexusCore.bukkit.UpdateChecker;
-import cc.synkdev.nexusCore.bukkit.Utils;
+import cc.synkdev.nexusCore.bukkit.NexusUtils;
 import cc.synkdev.nexusCore.components.NexusPlugin;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageKeys;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimplePie;
-import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -38,8 +36,6 @@ import java.util.*;
 
 public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, Listener {
     @Getter private static NexusAuctionHouse instance;
-    File configFile = new File(this.getDataFolder(), "config.yml");
-    File langFile = new File(this.getDataFolder(), "lang.json");
     FileConfiguration config;
     @Getter private long keepLogTime;
     @Getter private long expireTime;
@@ -82,21 +78,16 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
         }
 
         if (!missingDeps.isEmpty()) {
-            String s;
-            if (missingDeps.size() == 1) {
-                s = missingDeps.get(0);
-            } else {
-                s = String.join(", ", missingDeps);
-            }
+            String s = String.join(", ", missingDeps);
             Bukkit.getLogger().info("You are missing plugin dependancies! Please download the following: "+s);
             Bukkit.getPluginManager().registerEvents(this, this);
         } else {
             instance = this;
 
-            updateConfig();
+            config = NexusUtils.updateConfig(this);
             loadConfig();
 
-            reloadLang();
+            NexusUtils.initLang(this, langMap, lang);
 
             DataFileManager.init();
             DataFileManager.load();
@@ -150,19 +141,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
         if (event.getPlayer().isOp()) {
             if (missingDeps.isEmpty()) return;
 
-            int index = 0;
-            String s;
-            if (missingDeps.size() == 1) {
-                s = missingDeps.get(0);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < missingDeps.size() - 1; i++) {
-                    sb.append(missingDeps.get(i)).append(", ");
-                    index++;
-                }
-                sb.append(missingDeps.get(index + 1));
-                s = sb.toString();
-            }
+            String s = String.join(",", missingDeps);
             event.getPlayer().sendMessage(ChatColor.RED + "[NexusAuctionHouse] You are missing plugin dependancies! Please download the following: " + s);
 
         }
@@ -208,44 +187,6 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
         econ = rsp.getProvider();
         return econ != null;
     }
-
-    private void updateConfig() {
-        if (!this.getDataFolder().exists()) this.getDataFolder().mkdirs();
-        try {
-            if (!configFile.exists()) {
-                try {
-                    Files.copy(getResource("config.yml"), configFile.toPath());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                File temp = new File(getDataFolder(), "temp-config-"+System.currentTimeMillis()+".yml");
-                try {
-                    Files.copy(getResource("config.yml"), temp.toPath());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                FileConfiguration tempConfig = YamlConfiguration.loadConfiguration(temp);
-                FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-                boolean changed = false;
-                for (String key : tempConfig.getKeys(true)) {
-                    if (!config.contains(key)) {
-                        config.set(key, tempConfig.get(key));
-                        changed = true;
-                    }
-                }
-
-                if (changed) {
-                    config.save(configFile);
-                }
-
-                temp.delete();
-            }
-            config = YamlConfiguration.loadConfiguration(configFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
     public void loadConfig() {
         reloadConfig();
         keepLogTime = Util.parseDurationToSeconds(getConfig().getString("log-keep-time"));
@@ -256,16 +197,6 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
         minPrice = getConfig().getInt("price-limits.min");
         maxPrice = getConfig().getInt("price-limits.max");
         lang = getConfig().getString("lang");
-    }
-
-    public void reloadLang() {
-        langMap.clear();
-        try {
-            langMap.putAll(Lang.init(this, langFile, lang));
-        } catch (NoSuchMethodError e) {
-            UpdateChecker.update(UpdateChecker.checkOutated());
-            Utils.log("&4Your NexusCore install seems to be outdated! Please restart your server to update it.");
-        }
     }
 
     public void save() {
@@ -311,7 +242,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
 
     @Override
     public String ver() {
-        return "2.2.9";
+        return "2.3";
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +62,12 @@ public class ItemSortsManager {
             writer.newLine();
             writer.close();
 
-            file.delete();
-            Files.copy(temp.toPath(), file.toPath());
-            temp.delete();
+            Files.move(
+                    temp.toPath(),
+                    file.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
