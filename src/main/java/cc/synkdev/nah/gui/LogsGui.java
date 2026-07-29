@@ -7,8 +7,9 @@ import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
 import cc.synkdev.triumph.guis.GuiItem;
-import net.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,10 +24,10 @@ public class LogsGui {
     public Gui gui(int page) {
         Gui gui = Gui.gui()
                 .disableAllInteractions()
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("logTitle", core)))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+ Lang.translate("logTitle", core)))
                 .rows(6)
                 .create();
-        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
         if (page > 1) gui.setItem(6, 4, arrowLeft(page));
         if (page < max) gui.setItem(6, 6, arrowRight(page));
         fillGui(gui, page);
@@ -35,7 +36,7 @@ public class LogsGui {
     }
     GuiItem arrowLeft(int page) {
         return ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage", core))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Util.color("&r&e&l"+Lang.translate("prevPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(page-1).open(p);
@@ -43,7 +44,7 @@ public class LogsGui {
     }
     GuiItem arrowRight(int page) {
         return ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage", core))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Util.color("&r&e&l"+Lang.translate("nextPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(page+1).open(p);
@@ -65,11 +66,11 @@ public class LogsGui {
         List<Component> lore = new ArrayList<>();
         lore.addAll(Util.loreToComps(bA.getItem()));
         if (bA.getBuyer() == null) {
-            lore.addAll(Arrays.asList(Component.text(""), Component.text("  "+ChatColor.YELLOW+ Lang.translate("expiredWord", core))));
+            lore.addAll(Arrays.asList(LegacyComponentSerializer.legacyAmpersand().deserialize(""), LegacyComponentSerializer.legacyAmpersand().deserialize("  "+ChatColor.YELLOW+ Lang.translate("expiredWord", core))));
         } else {
-            lore.addAll(Arrays.asList(Component.text(""), Component.text("  "+ChatColor.YELLOW+ Lang.translate("soldTo", core, Util.getName(bA.getBuyer()), Util.getName(bA.getSeller())))));
+            lore.addAll(Arrays.asList(LegacyComponentSerializer.legacyAmpersand().deserialize(""), LegacyComponentSerializer.legacyAmpersand().deserialize("  "+ChatColor.YELLOW+ Lang.translate("soldTo", core, Util.getName(bA.getBuyer()), Util.getName(bA.getSeller())))));
         }
-        lore.addAll(Arrays.asList(Component.text(""), Component.text(ChatColor.GOLD+Lang.translate("giveLog", core))));
+        lore.addAll(Arrays.asList(LegacyComponentSerializer.legacyAmpersand().deserialize(""), LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.GOLD+Lang.translate("giveLog", core))));
         return ItemBuilder.from(copy)
                 .lore(lore)
                 .asGuiItem(event -> {

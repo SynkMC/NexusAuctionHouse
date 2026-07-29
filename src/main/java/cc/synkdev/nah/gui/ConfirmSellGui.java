@@ -10,7 +10,8 @@ import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
 import cc.synkdev.triumph.guis.GuiItem;
-import net.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,11 +28,11 @@ public class ConfirmSellGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     public Gui gui(Player p, long price) {
         Gui gui = Gui.gui()
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("confirmSell", core)))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+ Lang.translate("confirmSell", core)))
                 .rows(4)
                 .disableAllInteractions()
                 .create();
-        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
         gui.setItem(2, 5, item(p));
         gui.setItem(3, 3, confirm(price));
         gui.setItem(3, 7, cancel());
@@ -46,8 +47,8 @@ public class ConfirmSellGui {
         ItemStack item = new ItemStack(Material.GREEN_WOOL);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        if (core.getSellTaxPercent() > 0) meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("taxes", core, core.getSellTaxPercent()+"", tax+"")))));
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("confirm", core)));
+        if (core.getSellTaxPercent() > 0) meta.setLore(new ArrayList<>(Arrays.asList("", Util.color("&r&e&l"+Lang.translate("taxes", core, core.getSellTaxPercent()+"", tax+"")))));
+        meta.setDisplayName(Util.color("&r&c&l"+Lang.translate("confirm", core)));
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();
@@ -92,7 +93,7 @@ public class ConfirmSellGui {
         ItemStack item = new ItemStack(Material.BARRIER);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("cancel", core)));
+        meta.setDisplayName(Util.color("&r&c&l"+Lang.translate("cancel", core)));
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();

@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import cc.synkdev.json.JSONArray;
+import cc.synkdev.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;

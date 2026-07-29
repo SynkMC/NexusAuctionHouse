@@ -8,8 +8,8 @@ import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
 import cc.synkdev.triumph.guis.GuiItem;
-import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -18,15 +18,15 @@ public class PlusMinusExpiryGui {
     public Gui gui(BINAuction bA) {
         Gui gui = Gui.gui()
                 .disableAllInteractions()
-                .title(Component.text(Lang.translate("expiryEditGui", core)))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("expiryEditGui", core)))
                 .rows(3)
                 .create();
         gui.setItem(2, 5, ItemBuilder.from(Material.PAPER)
-                .name(Component.text(ChatColor.YELLOW+Lang.translate("editExpiryGuiInfo", core, Util.formatTimestamp(bA.getExpiry()))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+Lang.translate("editExpiryGuiInfo", core, Util.formatTimestamp(bA.getExpiry()))))
                 .asGuiItem());
 
         GuiItem calendar = ItemBuilder.from(Material.WHITE_STAINED_GLASS_PANE)
-                .name(Component.text(ChatColor.YELLOW+Lang.translate("editExpiryCalendar", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+Lang.translate("editExpiryCalendar", core)))
                 .asGuiItem(event -> new ExpiryCalendarGuis((Player) event.getWhoClicked(), bA));
         gui.getFiller().fillBetweenPoints(1, 4, 1, 6, calendar);
         gui.setItem(2, 4, calendar);
@@ -34,7 +34,7 @@ public class PlusMinusExpiryGui {
         gui.getFiller().fillBetweenPoints(3, 4, 3, 6, calendar);
 
         GuiItem plusMins = ItemBuilder.from(Material.YELLOW_STAINED_GLASS_PANE)
-                .name(Component.text(ChatColor.YELLOW+"+10min"))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+"+10min"))
                 .asGuiItem(event -> {
                     NAHUtil.setExpiry(bA, bA.getExpiry() + 600, event.getWhoClicked().getName());
                     ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), "entity.experience_orb.pickup", 1, 1);
@@ -45,7 +45,7 @@ public class PlusMinusExpiryGui {
         gui.setItem(3, 7, plusMins);
 
         GuiItem plusHr = ItemBuilder.from(Material.LIME_STAINED_GLASS_PANE)
-                .name(Component.text(ChatColor.YELLOW+"+1h"))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+"+1h"))
                 .asGuiItem(event -> {
                     NAHUtil.setExpiry(bA, bA.getExpiry() + 3600, event.getWhoClicked().getName());
                     ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), "entity.experience_orb.pickup", 1, 1);
@@ -56,7 +56,7 @@ public class PlusMinusExpiryGui {
         gui.setItem(3, 8, plusHr);
 
         GuiItem plusDay = ItemBuilder.from(Material.GREEN_STAINED_GLASS_PANE)
-                .name(Component.text(ChatColor.YELLOW+"+24h"))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+"+24h"))
                 .asGuiItem(event -> {
                     NAHUtil.setExpiry(bA, bA.getExpiry() + (3600*24), event.getWhoClicked().getName());
                     ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), "entity.experience_orb.pickup", 1, 1);
@@ -67,7 +67,7 @@ public class PlusMinusExpiryGui {
         gui.setItem(3, 9, plusDay);
 
         GuiItem minMins = ItemBuilder.from(Material.ORANGE_STAINED_GLASS_PANE)
-                .name(Component.text(ChatColor.YELLOW+"-10min"))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+"-10min"))
                 .asGuiItem(event -> {
                     NAHUtil.setExpiry(bA, bA.getExpiry() - 600, event.getWhoClicked().getName());
                     ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), "entity.experience_orb.pickup", 1, 1);
@@ -78,7 +78,7 @@ public class PlusMinusExpiryGui {
         gui.setItem(3, 3, minMins);
 
         GuiItem minHr = ItemBuilder.from(Material.RED_STAINED_GLASS_PANE)
-                .name(Component.text(ChatColor.YELLOW+"-1h"))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+"-1h"))
                 .asGuiItem(event -> {
                     NAHUtil.setExpiry(bA, bA.getExpiry() - 3600, event.getWhoClicked().getName());
                     ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), "entity.experience_orb.pickup", 1, 1);
@@ -89,7 +89,7 @@ public class PlusMinusExpiryGui {
         gui.setItem(3, 2, minHr);
 
         GuiItem minDay = ItemBuilder.from(Material.BROWN_STAINED_GLASS_PANE)
-                .name(Component.text(ChatColor.YELLOW+"-24h"))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+"-24h"))
                 .asGuiItem(event -> {
                     NAHUtil.setExpiry(bA, bA.getExpiry() - (3600*24), event.getWhoClicked().getName());
                     ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), "entity.experience_orb.pickup", 1, 1);

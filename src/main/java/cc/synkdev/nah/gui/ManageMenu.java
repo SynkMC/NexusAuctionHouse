@@ -9,7 +9,8 @@ import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
 import cc.synkdev.triumph.guis.GuiItem;
-import net.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -25,11 +26,11 @@ public class ManageMenu {
     public Gui gui(BINAuction bA) {
         Gui gui = Gui.gui()
                 .rows(6)
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("manageAuction", core)))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+ Lang.translate("manageAuction", core)))
                 .disableAllInteractions()
                 .create();
 
-        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
         gui.setItem(1, 5, item(bA));
         gui.setItem(3, 4, price(bA));
         gui.setItem(3, 5, expiry(bA));
@@ -44,8 +45,8 @@ public class ManageMenu {
     GuiItem price(BINAuction bA) {
         return ItemBuilder.from(Material.GOLD_INGOT)
                 .flags(ItemFlag.HIDE_ATTRIBUTES)
-                .name(Component.text(Lang.translate("changePrice", core, bA.getPrice()+"")))
-                .lore(Arrays.asList(Component.text(""), Component.text("  "+Lang.translate("currPrice", core, bA.getPrice()+"")), Component.text(Lang.translate("clickPrice", core))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("changePrice", core, bA.getPrice()+"")))
+                .lore(Arrays.asList(LegacyComponentSerializer.legacyAmpersand().deserialize(""), LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("currPrice", core, bA.getPrice()+"")), LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("clickPrice", core))))
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (!p.hasPermission("nah.manage.changeprice")) {
@@ -66,8 +67,8 @@ public class ManageMenu {
     GuiItem expiry(BINAuction bA) {
         return ItemBuilder.from(Material.CLOCK)
                 .flags(ItemFlag.HIDE_ATTRIBUTES)
-                .name(Component.text(ChatColor.YELLOW+Lang.translate("changeExpiry", core)))
-                .lore(Component.empty(), Component.text("  "+Lang.translate("currExpiry", core, Util.formatTimestamp(bA.getExpiry()))), Component.empty(), Component.text(Lang.translate("clickExpiry", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+Lang.translate("changeExpiry", core)))
+                .lore(Component.empty(), LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("currExpiry", core, Util.formatTimestamp(bA.getExpiry()))), Component.empty(), LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("clickExpiry", core)))
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (!p.hasPermission("nah.manage.changeexpiry")) {
@@ -81,8 +82,8 @@ public class ManageMenu {
     GuiItem delete(BINAuction bA) {
         return ItemBuilder.from(Material.BARRIER)
                 .flags(ItemFlag.HIDE_ATTRIBUTES)
-                .name(Component.text(Lang.translate("delete", core)))
-                .lore(Component.empty(), Component.text(Lang.translate("loreDelete", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("delete", core)))
+                .lore(Component.empty(), LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("loreDelete", core)))
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (!p.hasPermission("nah.manage.delete")) {
@@ -99,7 +100,7 @@ public class ManageMenu {
                 });
     }
     GuiItem give(BINAuction bA) {
-        return ItemBuilder.from(Material.CHEST).name(Component.text(Lang.translate("getItem", core))).lore(Component.empty(), Component.text(Lang.translate("loreGive", core))).asGuiItem(event -> {
+        return ItemBuilder.from(Material.CHEST).name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("getItem", core))).lore(Component.empty(), LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("loreGive", core))).asGuiItem(event -> {
             Player p = (Player) event.getWhoClicked();
             if (!p.hasPermission("nah.manage.give")) {
                 p.sendMessage(core.prefix()+ChatColor.RED+Lang.translate("noPerm", core));

@@ -1,5 +1,6 @@
 package cc.synkdev.nah.gui;
 
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.api.NAHUtil;
 import cc.synkdev.nah.manager.DataFileManager;
@@ -10,7 +11,6 @@ import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
 import cc.synkdev.triumph.guis.GuiItem;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,13 +26,12 @@ import java.util.List;
 public class ConfirmBuyGui {
     NexusAuctionHouse core = NexusAuctionHouse.getInstance();
     public Gui gui(BINAuction bA) {
-        Gui gui = Gui.gui()
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("confirmBuy", core)))
-                .rows(4)
+        Gui gui = Gui.gui().rows(4)
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+ Lang.translate("confirmBuy", core)))
                 .disableAllInteractions()
                 .create();
 
-        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
         gui.setItem(2, 5, item(bA));
         gui.setItem(3, 3, confirm(bA));
         gui.setItem(3, 7, cancel());
@@ -47,8 +46,8 @@ public class ConfirmBuyGui {
         ItemStack item = new ItemStack(Material.GREEN_WOOL);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("confirm", core)));
-        if (core.getBuyTaxPercent() > 0) meta.setLore(new ArrayList<>(Arrays.asList("", ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("taxes", core, core.getBuyTaxPercent()+"", tax+"")))));
+        meta.setDisplayName(Util.color("&r&c&l"+Lang.translate("confirm", core)));
+        if (core.getBuyTaxPercent() > 0) meta.setLore(new ArrayList<>(Arrays.asList("", Util.color("&r&e&l"+Lang.translate("taxes", core, core.getBuyTaxPercent()+"", tax+"")))));
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();
@@ -94,7 +93,7 @@ public class ConfirmBuyGui {
         ItemStack item = new ItemStack(Material.BARRIER);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r&c&l"+Lang.translate("cancel", core)));
+        meta.setDisplayName(Util.color("&r&c&l"+Lang.translate("cancel", core)));
         item.setItemMeta(meta);
         return ItemBuilder.from(item).asGuiItem(event -> {
             Player pl = (Player) event.getWhoClicked();

@@ -6,9 +6,10 @@ import cc.synkdev.nah.objects.ItemSort;
 import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
-import net.kyori.adventure.text.Component;
-import net.wesjd.anvilgui.AnvilGUI;
+import cc.synkdev.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -24,38 +25,38 @@ public class ContentsGui {
         Gui gui = Gui.gui()
                 .rows(6)
                 .disableAllInteractions()
-                .title(Component.text(Lang.translate("sortContentsTitle", core)))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("sortContentsTitle", core)))
                 .create();
         List<Material> materials = new ArrayList<>(Util.getFilteredMaterials(search));
         int max = (materials.size()+44)/45;
-        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
 
         if (page > 1) {
             gui.setItem(6, 4, ItemBuilder.from(Material.ARROW)
-                    .name(Component.text(Lang.translate("prevPage", core)))
+                    .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("prevPage", core)))
                     .asGuiItem(event -> gui(sort, page-1, search).open((Player) event.getWhoClicked())));
         }
 
         if (page < max) {
             gui.setItem(6, 6, ItemBuilder.from(Material.ARROW)
-                    .name(Component.text(Lang.translate("nextPage", core)))
+                    .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("nextPage", core)))
                     .asGuiItem(event -> gui(sort, page+1, search).open((Player) event.getWhoClicked())));
         }
 
         gui.setItem(6, 5, ItemBuilder.from(Material.BARRIER)
-                .name(Component.text(Lang.translate("back", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("back", core)))
                 .asGuiItem(event -> new EditSortGui().gui(sort).open((Player) event.getWhoClicked())));
 
         List<Component> lore = new ArrayList<>();
         if (search != null) {
-            lore.add(Component.text(""));
-            lore.add(Component.text("  "+Lang.translate("currSearch", core, search)));
-            lore.add(Component.text("  "+Lang.translate("searchReset", core)));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(""));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("currSearch", core, search)));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("searchReset", core)));
         }
-        lore.add(Component.text(""));
-        lore.add(Component.text(Lang.translate("clickSearch", core)));
-        gui.setItem(6, 2, ItemBuilder.from(Material.SIGN)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e"+Lang.translate("search", core))))
+        lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(""));
+        lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("clickSearch", core)));
+        gui.setItem(6, 2, ItemBuilder.from(Material.OAK_SIGN)
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Util.color("&r&e"+Lang.translate("search", core))))
                 .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .lore(lore)
                 .asGuiItem(event -> {
@@ -99,12 +100,12 @@ public class ContentsGui {
             boolean has = sort.getContents().contains(m);
             try {
                 gui.setItem(i - minSlot, ItemBuilder.from(m)
-                        .name(Component.text(ChatColor.GOLD+m.name()))
+                        .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.GOLD+m.name()))
                         .glow(has)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .lore(Component.text(""),
-                                has ? Component.text("  "+Lang.translate("selected", core)) : Component.text(Lang.translate("clickSelect", core)),
-                                has ? Component.text(Lang.translate("clickUnselect", core)) : null)
+                        .lore(LegacyComponentSerializer.legacyAmpersand().deserialize(""),
+                                has ? LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("selected", core)) : LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("clickSelect", core)),
+                                has ? LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("clickUnselect", core)) : null)
                         .asGuiItem(event -> {
                             if (has) {
                                 sort.getContents().remove(m);

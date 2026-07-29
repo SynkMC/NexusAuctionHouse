@@ -6,8 +6,9 @@ import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
 import cc.synkdev.triumph.guis.GuiItem;
-import net.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,10 +24,10 @@ public class RetrieveGui {
         max = (core.retrieveMap.getOrDefault(p.getUniqueId(), new ArrayList<>()).size()/10)+1;
         Gui gui = Gui.gui()
                 .disableAllInteractions()
-                .title(Component.text(ChatColor.YELLOW+ Lang.translate("titleRetrieve", core)))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+ Lang.translate("titleRetrieve", core)))
                 .rows(6)
                 .create();
-        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
         if (page > 1) gui.setItem(6, 4, arrowLeft(page));
         if (page < max) gui.setItem(6, 6, arrowRight(page));
         fillGui(gui, p, page);
@@ -35,7 +36,7 @@ public class RetrieveGui {
     }
     GuiItem arrowLeft(int page) {
         return ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage", core))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Util.color("&r&e&l"+Lang.translate("prevPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, page-1).open(p);
@@ -43,7 +44,7 @@ public class RetrieveGui {
     }
     GuiItem arrowRight(int page) {
         return ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage", core))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Util.color("&r&e&l"+Lang.translate("nextPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, page+1).open(p);
@@ -61,7 +62,7 @@ public class RetrieveGui {
     GuiItem item(ItemStack item, int page) {
         List<Component> lore = new ArrayList<>();
         lore.addAll(Util.loreToComps(item));
-        lore.addAll(Arrays.asList(Component.text(""), Component.text(Lang.translate("clickRetrieve", core))));
+        lore.addAll(Arrays.asList(LegacyComponentSerializer.legacyAmpersand().deserialize(""), LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("clickRetrieve", core))));
         return ItemBuilder.from(item.clone())
                 .lore(lore)
                 .asGuiItem(event -> {

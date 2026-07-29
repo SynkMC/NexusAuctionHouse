@@ -6,7 +6,8 @@ import cc.synkdev.nah.objects.ItemSort;
 import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
-import net.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,18 +22,18 @@ public class EditSortGui {
         Gui gui = Gui.gui()
                 .disableAllInteractions()
                 .rows(5)
-                .title(Component.text(Lang.translate("editSort", core, sort.getName())))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("editSort", core, sort.getName())))
                 .create();
 
-        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fill(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
         gui.setItem(1, 5, ItemBuilder.from(sort.getIcon())
-                .name(Component.text(ChatColor.GOLD+sort.getName()))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.GOLD+sort.getName()))
                 .lore(Component.empty(),
-                        Component.text(Lang.translate("editSortInfo", core)))
+                        LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("editSortInfo", core)))
                 .asGuiItem());
 
         gui.setItem(3, 3, ItemBuilder.from(Material.NAME_TAG)
-                .name(Component.text(Lang.translate("renameSort", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("renameSort", core)))
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (!p.hasPermission("nah.sorts.rename")) {
@@ -61,7 +62,7 @@ public class EditSortGui {
                 }));
 
         gui.setItem(3, 4, ItemBuilder.from(sort.getIcon())
-                .name(Component.text(Lang.translate("changeSortIcon", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("changeSortIcon", core)))
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (!p.hasPermission("nah.sorts.icon")) {
@@ -72,7 +73,7 @@ public class EditSortGui {
                 }));
 
         gui.setItem(3, 6, ItemBuilder.from(Material.CHEST)
-                .name(Component.text(Lang.translate("setSortContents", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("setSortContents", core)))
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (!p.hasPermission("nah.sorts.contents")) {
@@ -84,7 +85,7 @@ public class EditSortGui {
                 }));
 
         gui.setItem(3, 7, ItemBuilder.from(Material.BARRIER)
-                .name(Component.text(Lang.translate("delete", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("delete", core)))
                 .asGuiItem(event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (!p.hasPermission("nah.sorts.delete")) {
@@ -99,7 +100,7 @@ public class EditSortGui {
 
 
         gui.setItem(5, 5, ItemBuilder.from(Material.BARRIER)
-                .name(Component.text(Lang.translate("back", core)))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("back", core)))
                 .asGuiItem(event -> new SortsManagementGui().gui(1).open((Player) event.getWhoClicked())));
         return gui;
     }

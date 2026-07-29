@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
+import cc.synkdev.json.JSONObject;
 
 import java.util.UUID;
 

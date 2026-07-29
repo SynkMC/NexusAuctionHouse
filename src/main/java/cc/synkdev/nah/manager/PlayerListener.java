@@ -2,7 +2,7 @@ package cc.synkdev.nah.manager;
 
 import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nexusCore.bukkit.Lang;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

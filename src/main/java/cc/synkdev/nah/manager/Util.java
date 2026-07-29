@@ -4,7 +4,8 @@ import cc.synkdev.nah.NexusAuctionHouse;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.objects.SortingTypes;
 import cc.synkdev.nexusCore.bukkit.Lang;
-import net.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -58,7 +59,7 @@ public class Util {
         List<Component> list = new ArrayList<>();
         if (!item.hasItemMeta() || item.getItemMeta().getLore() == null) return list;
 
-        item.getItemMeta().getLore().forEach(s -> list.add(Component.text(s)));
+        item.getItemMeta().getLore().forEach(s -> list.add(LegacyComponentSerializer.legacyAmpersand().deserialize(s)));
         return list;
     }
     public static String convertSecondsToTime(long seconds) {
@@ -253,6 +254,10 @@ public class Util {
     }
     public static List<BINAuction> getPlayerListings(OfflinePlayer pl) {
         return core.runningBINs.stream().filter(bin -> bin.getSeller().equals(pl.getUniqueId())).toList();
+    }
+
+    public static void log(String s) {
+        Bukkit.getConsoleSender().sendMessage(core.prefix()+color(s));
     }
 
     public static String color(String s) {

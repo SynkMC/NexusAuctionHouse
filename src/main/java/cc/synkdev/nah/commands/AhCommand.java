@@ -6,10 +6,9 @@ import cc.synkdev.nah.gui.ConfirmSellGui;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nexusCore.bukkit.Analytics;
 import cc.synkdev.nexusCore.bukkit.Lang;
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.*;
+import cc.synkdev.acf.BaseCommand;
+import cc.synkdev.acf.annotation.*;
 import cc.synkdev.triumph.guis.Gui;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -35,7 +34,7 @@ public class AhCommand extends BaseCommand {
         if (args.length == 0) {
             NAHUtil.open(p, false, null, 1);
         } else {
-            NAHUtil.open(p, false, StringUtils.join(args), 1);
+            NAHUtil.open(p, false, String.join(" ", args), 1);
         }
     }
 

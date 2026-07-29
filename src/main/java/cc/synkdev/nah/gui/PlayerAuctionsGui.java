@@ -8,8 +8,9 @@ import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.triumph.builder.item.ItemBuilder;
 import cc.synkdev.triumph.guis.Gui;
 import cc.synkdev.triumph.guis.GuiItem;
-import net.kyori.adventure.text.Component;
+import cc.synkdev.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import cc.synkdev.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -35,11 +36,11 @@ public class PlayerAuctionsGui {
         this.page = page;
         Gui gui = Gui.gui()
                 .disableAllInteractions()
-                .title(Component.text(ChatColor.YELLOW+Lang.translate("playerTitle", core, target.getName())))
+                .title(LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.YELLOW+Lang.translate("playerTitle", core, target.getName())))
                 .rows(6)
                 .create();
 
-        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem());
+        gui.getFiller().fillBottom(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(LegacyComponentSerializer.legacyAmpersand().deserialize(" ")).asGuiItem());
         if (page > 1) {
             gui.setItem(6, 4, arrowLeft(page));
         }
@@ -51,7 +52,7 @@ public class PlayerAuctionsGui {
 
         if (snapshot != null) {
             gui.setItem(6, 5, ItemBuilder.from(Material.BARRIER)
-                    .name(snapshot == null ? Component.text(ChatColor.RED + Lang.translate("close", core)) : Component.text(ChatColor.RED + Lang.translate("back", core)))
+                    .name(snapshot == null ? LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.RED + Lang.translate("close", core)) : LegacyComponentSerializer.legacyAmpersand().deserialize(ChatColor.RED + Lang.translate("back", core)))
                     .asGuiItem(event -> {
                         new MainGui().gui(p, snapshot.getPage(), snapshot.getSearch(), snapshot.getFirstSort(), snapshot.getItSort()).open(p);
                     }));
@@ -60,7 +61,7 @@ public class PlayerAuctionsGui {
     }
     GuiItem arrowLeft(int page) {
         return ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("prevPage", core))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Util.color("&r&e&l"+Lang.translate("prevPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, target, page-1, snapshot).open(p);
@@ -68,7 +69,7 @@ public class PlayerAuctionsGui {
     }
     GuiItem arrowRight(int page) {
         return ItemBuilder.from(Material.ARROW)
-                .name(Component.text(ChatColor.translateAlternateColorCodes('&', "&r&e&l"+Lang.translate("nextPage", core))))
+                .name(LegacyComponentSerializer.legacyAmpersand().deserialize(Util.color("&r&e&l"+Lang.translate("nextPage", core))))
                 .asGuiItem(inventoryClickEvent -> {
                     Player p = (Player) inventoryClickEvent.getWhoClicked();
                     gui(p, target, page+1, snapshot).open(p);
@@ -92,15 +93,15 @@ public class PlayerAuctionsGui {
         if (!shulker) {
             lore.addAll(Util.loreToComps(bA.getItem()));
         }
-        lore.addAll(Arrays.asList(Component.text(""), Component.text("  "+Lang.translate("price", core, Long.toString(bA.getPrice()))), Component.text("  "+Lang.translate("seller", core, Util.getName(bA.getSeller()))), Component.text("  "+Lang.translate("expiry", core, Util.convertSecondsToTime(bA.getExpiry()))), Component.text(""), Component.text(Lang.translate("buyNow", core))));
+        lore.addAll(Arrays.asList(LegacyComponentSerializer.legacyAmpersand().deserialize(""), LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("price", core, Long.toString(bA.getPrice()))), LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("seller", core, Util.getName(bA.getSeller()))), LegacyComponentSerializer.legacyAmpersand().deserialize("  "+Lang.translate("expiry", core, Util.convertSecondsToTime(bA.getExpiry()))), LegacyComponentSerializer.legacyAmpersand().deserialize(""), LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("buyNow", core))));
         if (shulker) {
-            lore.add(Component.text(Lang.translate("shulkerMenu", core)));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("shulkerMenu", core)));
         }
         if (staff) {
-            lore.add(Component.text(Lang.translate("staffMenu", core)));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("staffMenu", core)));
         }
         if (self) {
-            lore.add(Component.text(Lang.translate("own-lore", core)));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(Lang.translate("own-lore", core)));
         }
         return ItemBuilder.from(copy)
                 .lore(lore)
