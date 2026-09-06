@@ -3,6 +3,9 @@ package cc.synkdev.nah;
 import cc.synkdev.bstats.bukkit.Metrics;
 import cc.synkdev.bstats.charts.SimplePie;
 import cc.synkdev.bstats.charts.SingleLineChart;
+import cc.synkdev.faststats.ErrorTracker;
+import cc.synkdev.faststats.bukkit.BukkitContext;
+import cc.synkdev.faststats.data.Metric;
 import cc.synkdev.nah.commands.AhCommand;
 import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
@@ -64,6 +67,16 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
     @Getter private int maxPrice;
     private boolean crashed = true;
 
+
+
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+    private final BukkitContext context = new BukkitContext.Factory(this, "b055286b23207690c984a5efc2b98e1d")
+            .errorTrackerService(ERROR_TRACKER)
+            .metrics(factory -> factory.addMetric(Metric.number("money", () -> money))
+                    .addMetric(Metric.number("volume", () -> runningBINs.size()))
+                    .addMetric(Metric.bool("premium", () -> false))
+                    .create())
+            .create();
     @Override
     public void onEnable() {
         missingDeps.clear();
@@ -98,7 +111,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
             metrics.addCustomChart(new SingleLineChart("money", () -> money));
             metrics.addCustomChart(new SingleLineChart("volume", () -> runningBINs.size()));
             metrics.addCustomChart(new SimplePie("free", () -> "Free"));
-            Analytics.registerSpl(this);
+            context.ready();
 
             BannedItemsManager.read();
             ToggleManager.read();
@@ -233,6 +246,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
     @Override
     public void onDisable() {
         if (missingDeps.isEmpty() && !crashed) DataFileManager.save();
+        context.shutdown();
     }
 
     @Override
@@ -242,7 +256,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
 
     @Override
     public String ver() {
-        return "2.4";
+        return "2.4.1";
     }
 
     @Override
