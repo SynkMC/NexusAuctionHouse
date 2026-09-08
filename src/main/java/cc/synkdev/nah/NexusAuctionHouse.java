@@ -11,7 +11,6 @@ import cc.synkdev.nah.manager.*;
 import cc.synkdev.nah.objects.BINAuction;
 import cc.synkdev.nah.objects.ItemSort;
 import cc.synkdev.nah.objects.SortingTypes;
-import cc.synkdev.nexusCore.bukkit.Analytics;
 import cc.synkdev.nexusCore.bukkit.Lang;
 import cc.synkdev.nexusCore.bukkit.NexusUtils;
 import cc.synkdev.nexusCore.components.NexusPlugin;
@@ -256,7 +255,7 @@ public final class NexusAuctionHouse extends JavaPlugin implements NexusPlugin, 
 
     @Override
     public String ver() {
-        return "2.4.1";
+        return "2.4.2";
     }
 
     @Override

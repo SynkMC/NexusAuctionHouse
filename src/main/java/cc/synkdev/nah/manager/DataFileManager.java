@@ -217,8 +217,6 @@ public class DataFileManager {
 
     public static void save() {
         try {
-            File temp = new File(folder, "temp-" + System.currentTimeMillis() + ".json");
-            BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
             JSONObject binObj = new JSONObject();
             binObj.put("money", core.money);
             JSONArray bins = new JSONArray();
@@ -229,15 +227,8 @@ public class DataFileManager {
                 bins.put(bin.export());
             }
             binObj.put("bins", bins);
-            writer.write(binObj.toString(2));
-            writer.newLine();
-            writer.close();
-            json.delete();
-            Files.move(temp.toPath(), json.toPath());
+            Files.write(json.toPath(), binObj.toString(2).getBytes());
 
-            temp = new File(folder, "temp-retrieve-" + System.currentTimeMillis() + ".json");
-            temp.createNewFile();
-            BufferedWriter writer1 = new BufferedWriter(new FileWriter(temp));
             JSONObject expiredObj = new JSONObject();
             JSONArray players = new JSONArray();
             core.retrieveMap.forEach((offlinePlayer, itemStacks) -> {
@@ -249,16 +240,7 @@ public class DataFileManager {
                 players.put(o);
             });
             expiredObj.put("players", players);
-            try {
-                writer1.write(expiredObj.toString(2));
-                writer1.newLine();
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            writer1.close();
-            expiredJson.delete();
-            Files.move(temp.toPath(), expiredJson.toPath());
+            Files.write(expiredJson.toPath(), expiredObj.toString(2).getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
